@@ -1,4 +1,6 @@
-﻿using HvZAPI.Models;
+﻿using AutoMapper;
+using HvZAPI.Models;
+using HvZAPI.Models.DTOs;
 using HvZAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
@@ -13,11 +15,12 @@ namespace HvZAPI.Controllers
     public class GameController : ControllerBase
     {
         private readonly IGameService _gameService;
+        private readonly IMapper _mapper;
 
-
-        public GameController(IGameService gameService)
+        public GameController(IGameService gameService, IMapper mapper)
         {
             _gameService = gameService;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -25,9 +28,9 @@ namespace HvZAPI.Controllers
         /// </summary>
         /// <returns>Enumerable of all games</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Game>>> GetGames()
+        public async Task<ActionResult<IEnumerable<GameDTO>>> GetGames()
         {
-            return Ok(await _gameService.GetGames());
+            return Ok(_mapper.Map<GameDTO>(await _gameService.GetGames()));
         }
 
         /// <summary>
@@ -36,11 +39,11 @@ namespace HvZAPI.Controllers
         /// <param name="id">Entity id</param>
         /// <returns>Found game entity</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<Game>> GetGameById(int id)
+        public async Task<ActionResult<GameDTO>> GetGameById(int id)
         {
             try
             {
-                return await _gameService.GetGameById(id);
+                return Ok(_mapper.Map<GameDTO>(await _gameService.GetGameById(id)));
             }
             catch(Exception ex)
             {
