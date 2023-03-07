@@ -23,7 +23,7 @@ namespace HvZAPI.Services.Concrete
 
         public async Task<IEnumerable<Game>> GetGames()
         {
-            return await _context.Games.ToListAsync();
+            return await _context.Games.Include(x => x.Players).ToListAsync();
         }
     }
 }
