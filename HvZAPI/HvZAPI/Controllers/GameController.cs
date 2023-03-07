@@ -84,5 +84,19 @@ namespace HvZAPI.Controllers
             var result = await _gameService.UpdateGame(game);
             return Ok(_mapper.Map<GameDTO>(result));
         }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteGame(int id)
+        {
+            try
+            {
+                await _gameService.DeleteGame(id);
+            }
+            catch(Exception error)
+            {
+                return NotFound(new ProblemDetails { Detail= error.Message });
+            }
+            return NoContent();
+        }
     }
 }

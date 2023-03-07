@@ -31,5 +31,12 @@ namespace HvZAPI.Services.Interfaces
         /// <param name="game">Game entity to update to</param>
         /// <returns>Updated game entity</returns>
         Task<Game> UpdateGame(Game game);
+
+        /// <summary>
+        /// Deletes a game entity
+        /// </summary>
+        /// <param name="id">Id of game entity</param>
+        /// <returns></returns>
+        Task DeleteGame(int id);
     }
 }
