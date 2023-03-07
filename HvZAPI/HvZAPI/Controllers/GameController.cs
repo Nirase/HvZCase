@@ -29,5 +29,26 @@ namespace HvZAPI.Controllers
         {
             return Ok(await _gameService.GetGames());
         }
+
+        /// <summary>
+        /// Fetches a game entity based on id
+        /// </summary>
+        /// <param name="id">Entity id</param>
+        /// <returns>Found game entity</returns>
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Game>> GetGameById(int id)
+        {
+            try
+            {
+                return await _gameService.GetGameById(id);
+            }
+            catch(Exception ex)
+            {
+                return NotFound(new ProblemDetails
+                {
+                    Detail = ex.Message
+                });
+            }
+        }
     }
 }
