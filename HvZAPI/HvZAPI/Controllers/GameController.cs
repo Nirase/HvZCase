@@ -30,7 +30,7 @@ namespace HvZAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GameDTO>>> GetGames()
         {
-            return Ok(_mapper.Map<GameDTO>(await _gameService.GetGames()));
+            return Ok(_mapper.Map<IEnumerable<GameDTO>>(await _gameService.GetGames()));
         }
 
         /// <summary>
