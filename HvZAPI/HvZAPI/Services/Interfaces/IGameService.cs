@@ -24,5 +24,12 @@ namespace HvZAPI.Services.Interfaces
         /// <param name="game">Game to create</param>
         /// <returns>Created game entity</returns>
         Task<Game> CreateGame(Game game);
+
+        /// <summary>
+        /// Updates an existing game entity
+        /// </summary>
+        /// <param name="game">Game entity to update to</param>
+        /// <returns>Updated game entity</returns>
+        Task<Game> UpdateGame(Game game);
     }
 }

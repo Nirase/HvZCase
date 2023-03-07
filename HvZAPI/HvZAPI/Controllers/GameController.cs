@@ -68,5 +68,21 @@ namespace HvZAPI.Controllers
             await _gameService.CreateGame(game);
             return CreatedAtAction(nameof(GetGameById), new { id = game.Id }, game);
         }
+
+        /// <summary>
+        /// Updates a game entity
+        /// </summary>
+        /// <param name="id">Id of entity to update</param>
+        /// <param name="updatedGame">Values to update with</param>
+        /// <returns>Complete updated game entity</returns>
+        [HttpPut("{id}")]
+        public async Task<ActionResult<GameDTO>> UpdateGame(int id, UpdateGameDTO updatedGame)
+        {
+            if(id != updatedGame.Id)
+                return BadRequest();
+            var game = _mapper.Map<Game>(updatedGame);
+            var result = await _gameService.UpdateGame(game);
+            return Ok(_mapper.Map<GameDTO>(result));
+        }
     }
 }

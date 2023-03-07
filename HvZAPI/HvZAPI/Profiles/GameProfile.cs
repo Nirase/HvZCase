@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HvZAPI.Contexts;
 using HvZAPI.Models;
 using HvZAPI.Models.DTOs.GameDTOs;
 
@@ -13,7 +14,8 @@ namespace HvZAPI.Profiles
                 {
                     options.MapFrom(p => p.Players.Select(x => $"api/v1/player/{x.Id}"));
                 });
-
+            CreateMap<UpdateGameDTO, Game>()
+                .ForMember(game => game.GameState, options => { options.MapFrom(src => src.GameState); });
             CreateMap<CreateGameDTO, Game>()
                 .ForMember(game => game.GameState, options => { options.MapFrom(src => "Registration"); });
                 

@@ -33,5 +33,12 @@ namespace HvZAPI.Services.Concrete
             return await _context.Games.Include(x => x.Players).ToListAsync();
         }
 
+        public async Task<Game> UpdateGame(Game game)
+        {
+            var foundGame = await GetGameById(game.Id);
+            foundGame.GameState = game.GameState;
+            await _context.SaveChangesAsync();
+            return foundGame;
+        }
     }
 }
