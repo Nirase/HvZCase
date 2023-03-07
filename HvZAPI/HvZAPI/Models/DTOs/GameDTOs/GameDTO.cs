@@ -1,4 +1,4 @@
-﻿namespace HvZAPI.Models.DTOs
+﻿namespace HvZAPI.Models.DTOs.GameDTOs
 {
     public class GameDTO
     {

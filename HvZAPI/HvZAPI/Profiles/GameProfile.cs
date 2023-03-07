@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using HvZAPI.Models;
-using HvZAPI.Models.DTOs;
+using HvZAPI.Models.DTOs.GameDTOs;
 
 namespace HvZAPI.Profiles
 {
@@ -13,6 +13,7 @@ namespace HvZAPI.Profiles
                 {
                     options.MapFrom(p => p.Players.Select(x => $"api/v1/player/{x.Id}"));
                 });
+            CreateMap<CreateGameDTO, Game>();
         }
     }
 }

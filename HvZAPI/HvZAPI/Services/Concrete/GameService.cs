@@ -13,6 +13,13 @@ namespace HvZAPI.Services.Concrete
             _context = context;
         }
 
+        public async Task<Game> CreateGame(Game game)
+        {
+            _context.Games.Add(game);
+            await _context.SaveChangesAsync();
+            return game;
+        }
+
         public async Task<Game> GetGameById(int id)
         {
             var game = await _context.Games.Include(x => x.Players).FirstOrDefaultAsync(x => x.Id == id);
@@ -25,5 +32,6 @@ namespace HvZAPI.Services.Concrete
         {
             return await _context.Games.Include(x => x.Players).ToListAsync();
         }
+
     }
 }
