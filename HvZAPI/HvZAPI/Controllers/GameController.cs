@@ -7,7 +7,7 @@ using System.Net.Mime;
 
 namespace HvZAPI.Controllers
 {
-    [Route("/v1/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiConventionType(typeof(DefaultApiConventions))]
     [Produces(MediaTypeNames.Application.Json)]
     [Consumes(MediaTypeNames.Application.Json)]
