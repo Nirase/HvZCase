@@ -13,7 +13,10 @@ namespace HvZAPI.Profiles
                 {
                     options.MapFrom(p => p.Players.Select(x => $"api/v1/player/{x.Id}"));
                 });
-            CreateMap<CreateGameDTO, Game>();
+
+            CreateMap<CreateGameDTO, Game>()
+                .ForMember(game => game.GameState, options => { options.MapFrom(src => "Registration"); });
+                
         }
     }
 }

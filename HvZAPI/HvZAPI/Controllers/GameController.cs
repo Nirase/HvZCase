@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
 using HvZAPI.Models;
-using HvZAPI.Models.DTOs;
+using HvZAPI.Models.DTOs.GameDTOs;
 using HvZAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
+using System.Runtime.InteropServices;
 
 namespace HvZAPI.Controllers
 {
@@ -54,5 +55,18 @@ namespace HvZAPI.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Creates a new game entity
+        /// </summary>
+        /// <param name="createGameDTO">Game entity to create</param>
+        /// <returns>Fully created game entity</returns>
+        [HttpPost]
+        public async Task<ActionResult<Game>> CreateGame(CreateGameDTO createGameDTO)
+        {
+            var game = _mapper.Map<Game>(createGameDTO);
+            await _gameService.CreateGame(game);
+            return CreatedAtAction(nameof(GetGameById), new { id = game.Id }, game);
+        }
     }
 }
