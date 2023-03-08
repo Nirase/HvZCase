@@ -32,17 +32,17 @@ namespace HvZAPI.Services.Concrete
             return kill;
         }
 
-        public async Task<Kill> GetKillById(int id)
+        public async Task<Kill> GetKillById(int id, int gameId)
         {
-            var kill = await _context.Kills.Include(x => x.Victim).Include(x => x.Killer).FirstOrDefaultAsync();
+            var kill = await _context.Kills.Include(x => x.Victim).Include(x => x.Killer).Where(x => x.GameId == gameId).FirstOrDefaultAsync(x => x.Id == id);
             if (kill is null)
                 throw new Exception("Kill Not Found");
             return kill;
         }
 
-        public async Task<IEnumerable<Kill>> GetKills()
+        public async Task<IEnumerable<Kill>> GetKills(int gameId)
         {
-            return await _context.Kills.Include(x => x.Victim).Include(x => x.Killer).ToListAsync();
+            return await _context.Kills.Include(x => x.Victim).Include(x => x.Killer).Where(x => x.GameId == gameId).ToListAsync();
         }
 
     }
