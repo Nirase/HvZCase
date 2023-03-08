@@ -85,6 +85,11 @@ namespace HvZAPI.Controllers
             return Ok(_mapper.Map<GameDTO>(result));
         }
 
+        /// <summary>
+        /// Deletes an existing game entity and all players and kills included in it 
+        /// </summary>
+        /// <param name="id">Id of entity to delete</param>
+        /// <returns>NoContent or NotFound</returns>
         [HttpDelete]
         public async Task<IActionResult> DeleteGame(int id)
         {
