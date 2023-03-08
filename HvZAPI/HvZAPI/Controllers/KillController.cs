@@ -42,7 +42,7 @@ namespace HvZAPI.Controllers
         {
             try
             {
-                return Ok(_mapper.Map<Kill>(await _KillService.GetKillById(id, int gameId)));
+                return Ok(_mapper.Map<Kill>(await _KillService.GetKillById(id, gameId)));
             }
             catch (Exception ex)
             {

@@ -21,9 +21,9 @@ namespace HvZAPI.Contexts
                 );
 
             modelBuilder.Entity<Game>().HasData(
-                new Game { Id = 1, Name = "Base Game", Description = "A basic game of HvZ", GameState = "Registration" },
-                new Game { Id = 2, Name = "Playing Game", Description = "A basic currently running game of HvZ", GameState = "InProgress" },
-                new Game { Id = 3, Name = "Completed Game", Description = "A basic completed game of HvZ", GameState = "Completed" }
+                new Game { Id = 1, Name = "Base Game", Description = "A basic game of HvZ", StartDate = "2022-04-21", EndDate="2035-02-12", GameState = "Registration" },
+                new Game { Id = 2, Name = "Playing Game", Description = "A basic currently running game of HvZ", StartDate="2021-12-01", EndDate="2022-04-23", GameState = "InProgress" },
+                new Game { Id = 3, Name = "Completed Game", Description = "A basic completed game of HvZ", StartDate = "2020-01-01", EndDate ="2020-01-04", GameState = "Completed" }
                 );
 
             modelBuilder.Entity<Player>().HasData(
