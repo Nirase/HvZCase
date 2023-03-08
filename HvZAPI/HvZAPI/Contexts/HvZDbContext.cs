@@ -37,12 +37,16 @@ namespace HvZAPI.Contexts
                 new Player { Id = 8, GameId = 3, UserId = 2, IsHuman = false, IsPatientZero = true, BiteCode = "bite" },
                 new Player { Id = 9, GameId = 3, UserId = 3, IsHuman = false, IsPatientZero = false, BiteCode = "safe" }
                 );
-
+            modelBuilder.Entity<Kill>()
+                .HasOne(k => k.Killer)
+                .WithMany()
+                .HasForeignKey(k => k.KillerId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Kill>().HasData(
                 new Kill { Id = 1, GameId = 1, KillerId = 1, VictimId = 2, TimeOfDeath = "2023-03-06"},
-                new Kill { Id = 2, GameId = 3, KillerId = 2, VictimId = 1, TimeOfDeath = "2023-03-01" },
-                new Kill { Id = 3, GameId = 3, KillerId = 2, VictimId = 3, TimeOfDeath = "2023-03-30" }
+                new Kill { Id = 2, GameId = 3, KillerId = 8, VictimId = 7, TimeOfDeath = "2023-03-01" },
+                new Kill { Id = 3, GameId = 3, KillerId = 8, VictimId = 9, TimeOfDeath = "2023-03-30" }
                 );
         }
 
