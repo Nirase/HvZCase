@@ -6,7 +6,7 @@ using System.Net.Mime;
 
 namespace HvZAPI.Controllers
 {
-    [Route("api/v1/[controller]")]
+    [Route("api/v1/game/{gameId}/[controller]")]
     [ApiConventionType(typeof(DefaultApiConventions))]
     [Produces(MediaTypeNames.Application.Json)]
     [Consumes(MediaTypeNames.Application.Json)]
@@ -27,9 +27,9 @@ namespace HvZAPI.Controllers
         /// </summary>
         /// <returns>Enumerable of all Kills</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Kill>>> GetKills()
+        public async Task<ActionResult<IEnumerable<Kill>>> GetKills(int gameId)
         {
-            return Ok(_mapper.Map<IEnumerable<Kill>>(await _KillService.GetKills()));
+            return Ok(_mapper.Map<IEnumerable<Kill>>(await _KillService.GetKills(gameId)));
         }
 
         /// <summary>
@@ -38,11 +38,11 @@ namespace HvZAPI.Controllers
         /// <param name="id">Entity id</param>
         /// <returns>Found Kill entity</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<Kill>> GetKillById(int id)
+        public async Task<ActionResult<Kill>> GetKillById(int id, int gameId)
         {
             try
             {
-                return Ok(_mapper.Map<Kill>(await _KillService.GetKillById(id)));
+                return Ok(_mapper.Map<Kill>(await _KillService.GetKillById(id, int gameId)));
             }
             catch (Exception ex)
             {

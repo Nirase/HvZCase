@@ -9,14 +9,14 @@ namespace HvZAPI.Services.Interfaces
         /// Fetches all Kills
         /// </summary>
         /// <returns>Enumerable of Kills</returns>
-        Task<IEnumerable<Kill>> GetKills();
+        Task<IEnumerable<Kill>> GetKills(int gameId);
 
         /// <summary>
         /// Fetches Kill based on id
         /// </summary>
         /// <param name="id">Kill Id to find</param>
         /// <returns>Found Kill entity</returns>
-        Task<Kill> GetKillById(int id);
+        Task<Kill> GetKillById(int id, int gameId);
 
         /// <summary>
         /// Creates a new Kill entity
