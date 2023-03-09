@@ -34,7 +34,10 @@ namespace HvZAPI.Controllers
             return Ok(_mapper.Map<IEnumerable<GameDTO>>(await _gameService.GetGames()));
         }
 
-
+        /// <summary>
+        /// Fetches all game entities with details about the players and kills
+        /// </summary>
+        /// <returns>Detailed game entities</returns>
         [HttpGet("withdetails")]
         public async Task<ActionResult<IEnumerable<DetailedGameDTO>>> GetGamesDetailed()
         {
@@ -61,6 +64,26 @@ namespace HvZAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Fetches a game entity with details about kills and players based on id
+        /// </summary>
+        /// <param name="id">Entity id</param>
+        /// <returns>Found game entity</returns>
+        [HttpGet("{id}/withdetails")]
+        public async Task<ActionResult<DetailedGameDTO>> GetGameWithDetailsById(int id)
+        {
+            try
+            {
+                return Ok(_mapper.Map<DetailedGameDTO>(await _gameService.GetGameById(id)));
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new ProblemDetails
+                {
+                    Detail = ex.Message
+                });
+            }
+        }
 
         /// <summary>
         /// Creates a new game entity
