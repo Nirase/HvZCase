@@ -15,9 +15,9 @@ namespace HvZAPI.Contexts
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().HasData(
-                new User { Id = 1, first_name = "Mattias", last_name = "Smedman"},
-                new User { Id = 2, first_name = "Danielle", last_name = "Hamrin" },
-                new User { Id = 3, first_name = "Keman", last_name = "Nguyen" }
+                new User { Id = 1, FirstName = "Mattias", LastName = "Smedman"},
+                new User { Id = 2, FirstName = "Danielle", LastName = "Hamrin" },
+                new User { Id = 3, FirstName = "Keman", LastName = "Nguyen" }
                 );
 
             modelBuilder.Entity<Game>().HasData(
