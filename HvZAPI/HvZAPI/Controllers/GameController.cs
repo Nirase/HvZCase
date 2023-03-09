@@ -34,6 +34,12 @@ namespace HvZAPI.Controllers
             return Ok(_mapper.Map<IEnumerable<GameDTO>>(await _gameService.GetGames()));
         }
 
+
+        [HttpGet("withdetails")]
+        public async Task<ActionResult<IEnumerable<DetailedGameDTO>>> GetGamesDetailed()
+        {
+            return Ok(_mapper.Map<IEnumerable<DetailedGameDTO>>(await _gameService.GetGames()));
+        }
         /// <summary>
         /// Fetches a game entity based on id
         /// </summary>
