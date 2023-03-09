@@ -16,7 +16,7 @@ namespace HvZAPI.Profiles
                 })
                 .ForMember(dto => dto.Kills, options =>
                 {
-                    options.MapFrom(p => p.Kills.Select(x => $"api/v1/kill/{x.Id}"));
+                    options.MapFrom(p => p.Kills.Select(x => $"api/v1/game/{x.GameId}/kill/{x.Id}"));
                 });
             CreateMap<UpdateGameDTO, Game>()
                 .ForMember(game => game.GameState, options => { options.MapFrom(src => src.GameState); });

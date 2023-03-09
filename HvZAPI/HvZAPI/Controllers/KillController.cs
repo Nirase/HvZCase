@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using HvZAPI.Models;
+using HvZAPI.Models.DTOs.GameDTOs;
+using HvZAPI.Models.DTOs.KillDTOs;
 using HvZAPI.Services.Concrete;
 using HvZAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -85,6 +87,23 @@ namespace HvZAPI.Controllers
                 return NotFound(new ProblemDetails { Detail = error.Message });
             }
             return NoContent();
+        }
+
+        /// <summary>
+        /// Updates a Kill entity
+        /// </summary>
+        /// <param name="id">Id of entity to update</param>
+        /// <param name="updatedKill">Values to update with</param>
+        /// <param name="gameId">Game id</param>
+        /// <returns>Complete updated Kill entity</returns>
+        [HttpPut("{id}")]
+        public async Task<ActionResult<Kill>> UpdateKill(int id, UpdateKillDTO updatedKill, int gameId)
+        {
+            if (id != updatedKill.Id)
+                return BadRequest();
+            var kill = _mapper.Map<Kill>(updatedKill);
+            var result = await _killService.UpdateKill(kill, gameId);
+            return Ok(result);
         }
     }
 }

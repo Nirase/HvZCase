@@ -66,5 +66,22 @@ namespace HvZAPI.Services.Concrete
             return await _context.Kills.Include(x => x.Victim).Include(x => x.Killer).Where(x => x.GameId == gameId).ToListAsync();
         }
 
+        public async Task<Kill> UpdateKill(Kill kill, int gameId)
+        {
+            var currentKill = await GetKillById(kill.Id, gameId);
+
+            if(kill.VictimId != currentKill.VictimId)
+            {
+                currentKill.Victim.IsHuman = true;
+                var newVictim = await _context.Players.FirstOrDefaultAsync(x => x.Id == kill.VictimId);
+                newVictim.IsHuman = false;
+                currentKill.Victim= newVictim;
+            }
+
+            currentKill.KillerId = kill.KillerId;
+
+            await _context.SaveChangesAsync();
+            return currentKill;
+        }
     }
 }

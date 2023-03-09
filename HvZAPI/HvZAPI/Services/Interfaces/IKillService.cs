@@ -33,5 +33,13 @@ namespace HvZAPI.Services.Interfaces
         /// <param name="killId">Kill entity to delete</param>
         /// <param name="gameId">Game entity to delete from</param>
         Task DeleteKill(int killId, int gameId);
+
+        /// <summary>
+        /// Updates a Kill entity
+        /// </summary>
+        /// <param name="kill">Updated kill entity</param>
+        /// <param name="gameId">Game id</param>
+        /// <returns>Updated kill entity</returns>
+        Task<Kill> UpdateKill(Kill kill, int gameId);
     }
 }
