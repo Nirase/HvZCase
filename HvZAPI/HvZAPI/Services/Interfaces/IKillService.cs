@@ -26,5 +26,12 @@ namespace HvZAPI.Services.Interfaces
         /// <param name="biteCode">Supplied bitecode</param>
         /// <returns>Created Kill entity</returns>
         Task<Kill> CreateKill(int killerId, int gameId, string biteCode);
+
+        /// <summary>
+        /// Deletes an existing Kill entity
+        /// </summary>
+        /// <param name="killId">Kill entity to delete</param>
+        /// <param name="gameId">Game entity to delete from</param>
+        Task DeleteKill(int killId, int gameId);
     }
 }

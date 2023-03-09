@@ -32,6 +32,27 @@ namespace HvZAPI.Services.Concrete
             return kill;
         }
 
+        public async Task DeleteKill(int killId, int gameId)
+        {
+            var kill = await GetKillById(killId, gameId);
+            if (kill is null)
+                throw new Exception("Kill not found");
+
+            var game = await _context.Games.Include(x => x.Kills).FirstOrDefaultAsync(x => x.Id == gameId);
+
+            if (game is null)
+                throw new Exception("Game not found");
+
+            var victim = await _context.Players.FirstOrDefaultAsync(x => x.Id == kill.VictimId);
+
+            if (victim is null)
+                throw new Exception("Victim is null");
+
+            victim.IsHuman = true;
+            game.Kills.Remove(kill);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<Kill> GetKillById(int id, int gameId)
         {
             var kill = await _context.Kills.Include(x => x.Victim).Include(x => x.Killer).Where(x => x.GameId == gameId).FirstOrDefaultAsync(x => x.Id == id);
