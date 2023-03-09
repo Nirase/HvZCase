@@ -29,6 +29,17 @@ builder.Services.AddEndpointsApiExplorer();
 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+ policy =>
+ {
+     policy.WithOrigins("http://localhost:3000")
+     .AllowAnyHeader()
+     .AllowAnyMethod();
+ });
+});
+
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
@@ -50,6 +61,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+
 }
 
 app.UseHttpsRedirection();
@@ -59,3 +71,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+app.UseCors();
