@@ -7,11 +7,11 @@ namespace HvZAPI.Models
         public int Id { get; set; }
         
         [MaxLength(30)]
-        public string first_name { get; set; }
+        public string FirstName { get; set; }
 
         [MaxLength(30)]
-        public string last_name { get; set; }
+        public string LastName { get; set; }
 
-        ICollection<Player> players { get; set; }
+        ICollection<Player> Players { get; set; }
     }
 }

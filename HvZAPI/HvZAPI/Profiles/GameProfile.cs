@@ -29,8 +29,8 @@ namespace HvZAPI.Profiles
                     {   
                         Id = x.Id,
                         URL = $"api/game/{x.GameId}/player/{x.Id}",
-                        FirstName = x.User != null ? x.User.first_name : "",
-                        LastName = x.User != null ? x.User.last_name : "",
+                        FirstName = x.User != null ? x.User.FirstName : "",
+                        LastName = x.User != null ? x.User.LastName : "",
                         IsHuman = x.IsHuman
                     }));
                 })

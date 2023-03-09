@@ -12,11 +12,11 @@ namespace HvZAPI.Profiles
             CreateMap<Player, LightweightPlayerDTO>()
                 .ForMember(dto => dto.FirstName, options =>
                 {
-                    options.MapFrom(src => src.User.first_name);
+                    options.MapFrom(src => src.User.FirstName);
                 })
                 .ForMember(dto => dto.LastName, options =>
                 {
-                    options.MapFrom(src => src.User.last_name);
+                    options.MapFrom(src => src.User.LastName);
                 })
                 .ForMember(dto => dto.URL, options =>
                 {
