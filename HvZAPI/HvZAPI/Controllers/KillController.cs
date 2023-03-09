@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
 using HvZAPI.Models;
+using HvZAPI.Models.DTOs.GameDTOs;
+using HvZAPI.Models.DTOs.KillDTOs;
+using HvZAPI.Services.Concrete;
 using HvZAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
@@ -13,12 +16,12 @@ namespace HvZAPI.Controllers
     [ApiController]
     public class KillController : ControllerBase
     {
-        private readonly IKillService _KillService;
+        private readonly IKillService _killService;
         private readonly IMapper _mapper;
 
         public KillController(IKillService KillService, IMapper mapper)
         {
-            _KillService = KillService;
+            _killService = KillService;
             _mapper = mapper;
         }
 
@@ -29,7 +32,7 @@ namespace HvZAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Kill>>> GetKills(int gameId)
         {
-            return Ok(_mapper.Map<IEnumerable<Kill>>(await _KillService.GetKills(gameId)));
+            return Ok(_mapper.Map<IEnumerable<Kill>>(await _killService.GetKills(gameId)));
         }
 
         /// <summary>
@@ -42,7 +45,7 @@ namespace HvZAPI.Controllers
         {
             try
             {
-                return Ok(_mapper.Map<Kill>(await _KillService.GetKillById(id, gameId)));
+                return Ok(_mapper.Map<Kill>(await _killService.GetKillById(id, gameId)));
             }
             catch (Exception ex)
             {
@@ -62,8 +65,45 @@ namespace HvZAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Kill>> CreateKill(int killerId, int gameId, string biteCode)
         {
-            var kill = await _KillService.CreateKill(killerId, gameId, biteCode);
+            var kill = await _killService.CreateKill(killerId, gameId, biteCode);
             return CreatedAtAction(nameof(GetKillById), new { id = kill.Id }, kill);
+        }
+
+
+        /// <summary>
+        /// Deletes a Kill entity
+        /// </summary>
+        /// <param name="killId">Id of entity to delete</param>
+        /// <param name="gameId">Game that kill is in</param>
+        [HttpDelete]
+        public async Task<IActionResult> DeleteKill(int killId, int gameId)
+        {
+            try
+            {
+                await _killService.DeleteKill(killId, gameId);
+            }
+            catch (Exception error)
+            {
+                return NotFound(new ProblemDetails { Detail = error.Message });
+            }
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Updates a Kill entity
+        /// </summary>
+        /// <param name="id">Id of entity to update</param>
+        /// <param name="updatedKill">Values to update with</param>
+        /// <param name="gameId">Game id</param>
+        /// <returns>Complete updated Kill entity</returns>
+        [HttpPut("{id}")]
+        public async Task<ActionResult<Kill>> UpdateKill(int id, UpdateKillDTO updatedKill, int gameId)
+        {
+            if (id != updatedKill.Id)
+                return BadRequest();
+            var kill = _mapper.Map<Kill>(updatedKill);
+            var result = await _killService.UpdateKill(kill, gameId);
+            return Ok(result);
         }
     }
 }
