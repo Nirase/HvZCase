@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using HvZAPI.Models;
+using HvZAPI.Models.DTOs.MissionDTOs;
 using HvZAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
@@ -26,13 +27,14 @@ namespace HvZAPI.Controllers
         /// Fetches a Mission entity based on id
         /// </summary>
         /// <param name="id">Entity id</param>
+        /// <param name="gameId">Game entity id</param>
         /// <returns>Found Mission entity</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<Mission>> GetMissionById(int id, int gameId)
+        public async Task<ActionResult<MissionDTO>> GetMissionById(int id, int gameId)
         {
             try
             {
-                return Ok(_mapper.Map<Mission>(await _missionService.GetMissionById(id, gameId)));
+                return Ok(_mapper.Map<MissionDTO>(await _missionService.GetMissionById(id, gameId)));
             }
             catch (Exception ex)
             {

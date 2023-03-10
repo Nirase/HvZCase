@@ -26,7 +26,10 @@ namespace HvZAPI.Services.Concrete
 
         public async Task<Mission> GetMissionById(int id, int gameId)
         {
-            throw new NotImplementedException();
+            var mission = await _context.Missions.Include(x => x.Game).FirstOrDefaultAsync(x => x.Id == id);
+            if (mission is null)
+                throw new Exception("Mission not found");
+            return mission;
         }
 
         public Task<IEnumerable<Mission>> GetMissions(int gameId)
