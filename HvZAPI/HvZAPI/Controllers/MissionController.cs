@@ -24,6 +24,17 @@ namespace HvZAPI.Controllers
         }
 
         /// <summary>
+        /// Fetches all Missions in game
+        /// </summary>
+        /// <param name="gameId">Game to get missions from</param>
+        /// <returns>Enumerable of all Missions in game</returns>
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<MissionDTO>>> GetMissions(int gameId)
+        {
+            return Ok(_mapper.Map<IEnumerable<MissionDTO>>(await _missionService.GetMissions(gameId)));
+        }
+
+        /// <summary>
         /// Fetches a Mission entity based on id
         /// </summary>
         /// <param name="id">Entity id</param>

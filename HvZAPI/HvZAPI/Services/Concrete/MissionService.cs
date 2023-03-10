@@ -32,9 +32,9 @@ namespace HvZAPI.Services.Concrete
             return mission;
         }
 
-        public Task<IEnumerable<Mission>> GetMissions(int gameId)
+        public async Task<IEnumerable<Mission>> GetMissions(int gameId)
         {
-            throw new NotImplementedException();
+            return await _context.Missions.Include(x => x.Game).ToListAsync();
         }
 
         public Task<Mission> UpdateMission(Mission Mission, int gameId)
