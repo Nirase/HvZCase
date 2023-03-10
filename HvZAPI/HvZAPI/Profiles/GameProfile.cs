@@ -3,6 +3,7 @@ using HvZAPI.Contexts;
 using HvZAPI.Models;
 using HvZAPI.Models.DTOs.GameDTOs;
 using HvZAPI.Models.DTOs.KillDTOs;
+using HvZAPI.Models.DTOs.MissionDTOs;
 using HvZAPI.Models.DTOs.PlayerDTOs;
 using Microsoft.JSInterop.Infrastructure;
 
@@ -20,6 +21,10 @@ namespace HvZAPI.Profiles
                 .ForMember(dto => dto.Kills, options =>
                 {
                     options.MapFrom(p => p.Kills.Select(x => $"api/v1/game/{x.GameId}/kill/{x.Id}"));
+                })
+                .ForMember(dto => dto.Missions, options =>
+                {
+                    options.MapFrom(p => p.Missions.Select(x => $"api/v1/game/{x.GameId}/mission/{x.Id}"));
                 });
 
             CreateMap<Game, DetailedGameDTO>()
@@ -43,6 +48,21 @@ namespace HvZAPI.Profiles
                         KillerId = x.KillerId,
                         TimeOfDeath= x.TimeOfDeath,
                         VictimId = x.VictimId
+                    }));
+                })
+                .ForMember(dto => dto.Missions, options =>
+                {
+                    options.MapFrom(src => src.Missions.Select(x => new MissionDTO
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        Description = x.Description,
+                        StartDate = x.StartDate,
+                        EndDate = x.EndDate,
+                        Game = $"api/v1/game/{x.GameId}",
+                        Location = x.Location,
+                        VisibleToHumans = x.VisibleToHumans,
+                        VisibleToZombies = x.VisibleToZombies
                     }));
                 });
             CreateMap<UpdateGameDTO, Game>()

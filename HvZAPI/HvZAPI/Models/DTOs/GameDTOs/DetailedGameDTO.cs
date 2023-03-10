@@ -1,4 +1,5 @@
 ﻿using HvZAPI.Models.DTOs.KillDTOs;
+using HvZAPI.Models.DTOs.MissionDTOs;
 using HvZAPI.Models.DTOs.PlayerDTOs;
 
 namespace HvZAPI.Models.DTOs.GameDTOs
@@ -13,5 +14,6 @@ namespace HvZAPI.Models.DTOs.GameDTOs
         public string EndDate { get; set; }
         public List<LightweightPlayerDTO> Players { get; set; }
         public List<LightweightKillDTO> Kills { get; set; }
+        public List<MissionDTO> Missions { get; set; }
     }
 }

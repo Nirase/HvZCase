@@ -1,17 +1,15 @@
-﻿namespace HvZAPI.Models
+﻿namespace HvZAPI.Models.DTOs.MissionDTOs
 {
-    public class Game
+    public class MissionDTO
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public string GameState { get; set; }
+        public bool VisibleToHumans { get; set; }
+        public bool VisibleToZombies { get; set; }
         public string StartDate { get; set; }
         public string EndDate { get; set; }
         public string Location { get; set; }
-        public ICollection<Player> Players { get; set; }
-        public ICollection<Kill> Kills { get; set; }
-        public ICollection<Mission> Missions { get; set; }
-
+        public string Game { get; set; }
     }
 }
