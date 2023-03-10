@@ -35,7 +35,7 @@ namespace HvZAPI.Controllers
         }
 
         /// <summary>
-        /// Fetches all game entities with details about the players and kills
+        /// Fetches all game entities with details
         /// </summary>
         /// <returns>Detailed game entities</returns>
         [HttpGet("withdetails")]
@@ -65,7 +65,7 @@ namespace HvZAPI.Controllers
         }
 
         /// <summary>
-        /// Fetches a game entity with details about kills and players based on id
+        /// Fetches a game entity with details based on id
         /// </summary>
         /// <param name="id">Entity id</param>
         /// <returns>Found game entity</returns>

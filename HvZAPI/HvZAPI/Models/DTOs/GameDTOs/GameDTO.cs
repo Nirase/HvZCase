@@ -10,6 +10,7 @@
         public string EndDate { get; set; }
         public List<string> Players { get; set; }
         public List<string> Kills { get; set; }
+        public List<string> Missions { get; set; }
         
     }
 }

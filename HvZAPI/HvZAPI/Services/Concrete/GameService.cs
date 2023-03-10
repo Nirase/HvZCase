@@ -34,7 +34,7 @@ namespace HvZAPI.Services.Concrete
 
         public async Task<Game> GetGameById(int id)
         {
-            var game = await _context.Games.Include(x => x.Players).ThenInclude(x => x.User).Include(x => x.Kills).FirstOrDefaultAsync(x => x.Id == id);
+            var game = await _context.Games.Include(x => x.Players).ThenInclude(x => x.User).Include(x => x.Kills).Include(x => x.Missions).FirstOrDefaultAsync(x => x.Id == id);
             if (game is null)
                 throw new Exception("Game Not Found");
             return game;
@@ -42,7 +42,7 @@ namespace HvZAPI.Services.Concrete
 
         public async Task<IEnumerable<Game>> GetGames()
         {
-            return await _context.Games.Include(x => x.Players).ThenInclude(x => x.User).Include(x => x.Kills).ToListAsync();
+            return await _context.Games.Include(x => x.Players).ThenInclude(x => x.User).Include(x => x.Kills).Include(x => x.Missions).ToListAsync();
         }
 
         public async Task<Game> UpdateGame(Game game)
