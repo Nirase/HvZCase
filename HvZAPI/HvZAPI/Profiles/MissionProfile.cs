@@ -14,6 +14,7 @@ namespace HvZAPI.Profiles
                 {
                     options.MapFrom(src => $"api/v1/game/{src.GameId}");
                 });
+            CreateMap<UpdateMissionDTO, Mission>();
         }
     }
 }

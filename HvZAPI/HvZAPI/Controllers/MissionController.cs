@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HvZAPI.Models;
 using HvZAPI.Models.DTOs.MissionDTOs;
+using HvZAPI.Models.DTOs.MissionDTOs;
 using HvZAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
@@ -54,6 +55,24 @@ namespace HvZAPI.Controllers
                     Detail = ex.Message
                 });
             }
+        }
+
+
+        /// <summary>
+        /// Updates a Mission entity
+        /// </summary>
+        /// <param name="id">Id of entity to update</param>
+        /// <param name="updatedMission">Values to update with</param>
+        /// <param name="gameId">Game id</param>
+        /// <returns>Complete updated Mission entity</returns>
+        [HttpPut("{id}")]
+        public async Task<ActionResult<MissionDTO>> UpdateMission(int id, UpdateMissionDTO updatedMission, int gameId)
+        {
+            if (id != updatedMission.Id)
+                return BadRequest();
+            var Mission = _mapper.Map<Mission>(updatedMission);
+            var result = await _missionService.UpdateMission(Mission, gameId);
+            return Ok(_mapper.Map<MissionDTO>(result));
         }
     }
 }

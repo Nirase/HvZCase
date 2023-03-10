@@ -19,9 +19,13 @@ namespace HvZAPI.Services.Concrete
             throw new NotImplementedException();
         }
 
-        public Task DeleteMission(int MissionId, int gameId)
+        public async Task DeleteMission(int missionId, int gameId)
         {
-            throw new NotImplementedException();
+            var mission = await GetMissionById(missionId, gameId);
+            if (mission is null)
+                throw new Exception("Mission not found");
+            _context.Missions.Remove(mission);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<Mission> GetMissionById(int id, int gameId)
@@ -37,9 +41,18 @@ namespace HvZAPI.Services.Concrete
             return await _context.Missions.Include(x => x.Game).ToListAsync();
         }
 
-        public Task<Mission> UpdateMission(Mission Mission, int gameId)
+        public async Task<Mission> UpdateMission(Mission mission, int gameId)
         {
-            throw new NotImplementedException();
+            var foundMission = await GetMissionById(mission.Id, gameId);
+            foundMission.StartDate = mission.StartDate;
+            foundMission.Name = mission.Name;
+            foundMission.Description = mission.Description;
+            foundMission.EndDate = mission.EndDate;
+            foundMission.GameId = mission.GameId;
+            foundMission.VisibleToHumans = mission.VisibleToHumans;
+            foundMission.VisibleToZombies = mission.VisibleToZombies;
+            await _context.SaveChangesAsync();
+            return foundMission;
         }
     }
 }
