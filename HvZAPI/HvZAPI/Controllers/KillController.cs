@@ -4,6 +4,7 @@ using HvZAPI.Models.DTOs.GameDTOs;
 using HvZAPI.Models.DTOs.KillDTOs;
 using HvZAPI.Services.Concrete;
 using HvZAPI.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 
@@ -19,6 +20,7 @@ namespace HvZAPI.Controllers
         private readonly IKillService _killService;
         private readonly IMapper _mapper;
 
+        
         public KillController(IKillService KillService, IMapper mapper)
         {
             _killService = KillService;
@@ -30,6 +32,7 @@ namespace HvZAPI.Controllers
         /// </summary>
         /// <returns>Enumerable of all Kills</returns>
         [HttpGet]
+        [Authorize(Roles = "user")]
         public async Task<ActionResult<IEnumerable<Kill>>> GetKills(int gameId)
         {
             return Ok(_mapper.Map<IEnumerable<Kill>>(await _killService.GetKills(gameId)));
@@ -41,6 +44,7 @@ namespace HvZAPI.Controllers
         /// <param name="id">Entity id</param>
         /// <returns>Found Kill entity</returns>
         [HttpGet("{id}")]
+        [Authorize(Roles = "user")]
         public async Task<ActionResult<Kill>> GetKillById(int id, int gameId)
         {
             try
@@ -61,8 +65,11 @@ namespace HvZAPI.Controllers
         /// Creates a new Kill entity
         /// </summary>
         /// <param name="biteCode">Supplied bite code</param>
+        /// <param name="killerId">Id of killer</param>
+        /// <param name="gameId">Id of game</param>
         /// <returns>Fully created Kill entity</returns>
         [HttpPost]
+        [Authorize(Roles = "user")]
         public async Task<ActionResult<Kill>> CreateKill(int killerId, int gameId, string biteCode)
         {
             var kill = await _killService.CreateKill(killerId, gameId, biteCode);
@@ -76,6 +83,7 @@ namespace HvZAPI.Controllers
         /// <param name="killId">Id of entity to delete</param>
         /// <param name="gameId">Game that kill is in</param>
         [HttpDelete]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteKill(int killId, int gameId)
         {
             try
@@ -97,6 +105,7 @@ namespace HvZAPI.Controllers
         /// <param name="gameId">Game id</param>
         /// <returns>Complete updated Kill entity</returns>
         [HttpPut("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<Kill>> UpdateKill(int id, UpdateKillDTO updatedKill, int gameId)
         {
             if (id != updatedKill.Id)
