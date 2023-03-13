@@ -77,9 +77,12 @@ namespace HvZAPI.Services.Concrete
                 newVictim.IsHuman = false;
                 currentKill.Victim= newVictim;
             }
-
+            currentKill.GameId = gameId;
+            currentKill.VictimId = kill.VictimId;
+            currentKill.Location = kill.Location;
+            currentKill.TimeOfDeath = kill.TimeOfDeath;
             currentKill.KillerId = kill.KillerId;
-
+            currentKill.Id = kill.Id;
             await _context.SaveChangesAsync();
             return currentKill;
         }

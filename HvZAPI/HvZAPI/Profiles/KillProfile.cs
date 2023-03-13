@@ -4,9 +4,9 @@ using HvZAPI.Models.DTOs.KillDTOs;
 
 namespace HvZAPI.Profiles
 {
-    public class KillService : Profile
+    public class KillProfile : Profile
     {
-        public KillService() 
+        public KillProfile() 
         {
             CreateMap<UpdateKillDTO, Kill>();
         }
