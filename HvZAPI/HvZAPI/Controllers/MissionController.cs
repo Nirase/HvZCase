@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using HvZAPI.Models;
 using HvZAPI.Models.DTOs.MissionDTOs;
-using HvZAPI.Models.DTOs.MissionDTOs;
 using HvZAPI.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 
@@ -30,6 +30,7 @@ namespace HvZAPI.Controllers
         /// <param name="gameId">Game to get missions from</param>
         /// <returns>Enumerable of all Missions in game</returns>
         [HttpGet]
+        [Authorize(Roles = "user")]
         public async Task<ActionResult<IEnumerable<MissionDTO>>> GetMissions(int gameId)
         {
             return Ok(_mapper.Map<IEnumerable<MissionDTO>>(await _missionService.GetMissions(gameId)));
@@ -42,6 +43,7 @@ namespace HvZAPI.Controllers
         /// <param name="gameId">Game entity id</param>
         /// <returns>Found Mission entity</returns>
         [HttpGet("{id}")]
+        [Authorize(Roles = "user")]
         public async Task<ActionResult<MissionDTO>> GetMissionById(int id, int gameId)
         {
             try
@@ -63,6 +65,7 @@ namespace HvZAPI.Controllers
         /// <param name="id">Id of entity to delete</param>
         /// <param name="gameId">Game to delete from</param>
         [HttpDelete]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteMission(int id, int gameId)
         {
             try
@@ -83,6 +86,7 @@ namespace HvZAPI.Controllers
         /// <param name="gameId">Game id</param>
         /// <returns>Complete updated Mission entity</returns>
         [HttpPut("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<MissionDTO>> UpdateMission(int id, UpdateMissionDTO updatedMission, int gameId)
         {
             if (id != updatedMission.Id)
