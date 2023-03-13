@@ -1,6 +1,7 @@
 ﻿using HvZAPI.Contexts;
 using HvZAPI.Models;
 using HvZAPI.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace HvZAPI.Services.Concrete
 {
@@ -12,19 +13,68 @@ namespace HvZAPI.Services.Concrete
             _context = context;
         }
 
-        public Task<IEnumerable<Player>> AddPlayer(int gameId, int playerId)
+        public async Task<Player> AddPlayer(int gameId, Player player, int userId)
         {
-            throw new NotImplementedException();
+            var game = await _context.Games.FirstOrDefaultAsync(x => x.Id == gameId);
+            if (game is null)
+                throw new Exception("Game not found");
+
+            player.IsHuman = true;
+            player.IsPatientZero = false;
+            player.GameId= gameId;
+            player.UserId= userId;
+
+            var users = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+            if(users is null)
+                throw new Exception("User not found");
+
+            var existingPlayers = await GetPlayers(gameId);
+            foreach (var existingPlayer in existingPlayers)
+            {
+                if(existingPlayer.UserId == userId)
+                {
+                    throw new Exception("Player already in game");
+                }
+            }
+            _context.Players.Add(player);
+            await _context.SaveChangesAsync();
+            return player;
         }
 
-        public Task<IEnumerable<Player>> GetPlayer(int gameId, int playerId)
+        public async Task DeletePlayer(int gameId, int playerId)
         {
-            throw new NotImplementedException();
+            var player = await GetPlayer(gameId, playerId);
+
+            var game = await _context.Games.FirstOrDefaultAsync(x => x.Id == gameId);
+            if (game is null)
+                throw new Exception("Game not found");
+            //game.Players.Remove(player);
+            _context.Players.Remove(player);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<IEnumerable<Player>> GetPlayers(int gameId)
+        public async Task<Player> GetPlayer(int gameId, int playerId)
         {
-            throw new NotImplementedException();
+            var player = await _context.Players.FirstOrDefaultAsync(x => x.Id == playerId && x.GameId == gameId);
+            if (player is null)
+                throw new Exception("Player Not Found");
+            return player;
+        }
+
+        public async Task<IEnumerable<Player>> GetPlayers(int gameId)
+        {
+            return await _context.Players.Include(x => x.User).Where(x => x.GameId == gameId).ToListAsync();
+        }
+
+        public async Task<Player> UpdatePlayer(int gameId, Player player)
+        {
+            var foundPlayer = await GetPlayer(gameId, player.Id);
+            
+            foundPlayer.IsHuman = player.IsHuman;
+            foundPlayer.IsPatientZero = player.IsPatientZero;
+            
+            await _context.SaveChangesAsync();
+            return foundPlayer;
         }
     }
 }

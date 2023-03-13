@@ -1,0 +1,71 @@
+﻿using AutoMapper;
+using HvZAPI.Models;
+using HvZAPI.Models.DTOs.GameDTOs;
+using HvZAPI.Models.DTOs.PlayerDTOs;
+using HvZAPI.Services.Concrete;
+using HvZAPI.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using System.Net.Mime;
+
+namespace HvZAPI.Controllers
+{
+    [Route("api/v1/game/{gameId}/[controller]")]
+    [ApiConventionType(typeof(DefaultApiConventions))]
+    [Produces(MediaTypeNames.Application.Json)]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [ApiController]
+    public class PlayerController : ControllerBase
+    {
+        private readonly IPlayerService _playerService;
+        private readonly IMapper _mapper;
+
+        public PlayerController(IPlayerService playerService, IMapper mapper)
+        {
+            _playerService = playerService;
+            _mapper = mapper;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<PlayerDTO>>> GetPlayers(int gameId)
+        {
+            return Ok(_mapper.Map<IEnumerable<PlayerDTO>>(await _playerService.GetPlayers(gameId)));
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<PlayerDTO>> GetPlayerById(int gameId, int playerId)
+        {
+            return Ok(_mapper.Map<PlayerDTO>(await _playerService.GetPlayer(gameId, playerId)));
+        }
+
+        [HttpPost]
+        [ActionName(nameof(GetPlayerById))]
+        public async Task<ActionResult<Player>> CreatePlayer(int gameId, CreatePlayerDTO createPlayerDTO, int userId)
+        {
+            var player = _mapper.Map<Player>(createPlayerDTO);
+            await _playerService.AddPlayer(gameId, player, userId);
+            return CreatedAtAction(nameof(GetPlayerById), new { id = player.Id }, player);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<PlayerDTO>> UpdatePlayer(int gameId, UpdatePlayerDTO updatedPlayer)
+        {
+            var player = _mapper.Map<Player>(updatedPlayer);
+            var result = await _playerService.UpdatePlayer(gameId, player);
+            return Ok(_mapper.Map<PlayerDTO>(result));
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeletePlayer(int gameId, int playerId)
+        {
+            try
+            {
+                await _playerService.DeletePlayer(gameId, playerId);
+            }
+            catch (Exception error)
+            {
+                return NotFound(new ProblemDetails { Detail = error.Message });
+            }
+            return NoContent();
+        }
+    }
+}

@@ -14,12 +14,24 @@ namespace HvZAPI.Services.Interfaces
         /// Fetches a player in a game based on id
         /// </summary>
         /// <returns> Player entity </returns>
-        Task<IEnumerable<Player>> GetPlayer(int gameId, int playerId);
+        Task<Player> GetPlayer(int gameId, int playerId);
 
         /// <summary>
         /// Fetches a player in a game based on id
         /// </summary>
         /// <returns> Player entity </returns>
-        Task<IEnumerable<Player>> AddPlayer(int gameId, int playerId);
+        Task<Player> AddPlayer(int gameId, Player player, int userId);
+
+        /// <summary>
+        /// Fetches a player in a game based on id
+        /// </summary>
+        /// <returns> Player entity </returns>
+        Task<Player> UpdatePlayer(int gameId, Player player);
+
+        /// <summary>
+        /// deketes a player from a game based on id
+        /// </summary>
+        /// <returns> deletes player entity </returns>
+        Task DeletePlayer(int gameId, int playerId);
     }
 }
