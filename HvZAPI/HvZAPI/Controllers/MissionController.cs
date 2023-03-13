@@ -57,7 +57,24 @@ namespace HvZAPI.Controllers
             }
         }
 
-
+        /// <summary>
+        /// Deletes an existing Mission entity
+        /// </summary>
+        /// <param name="id">Id of entity to delete</param>
+        /// <param name="gameId">Game to delete from</param>
+        [HttpDelete]
+        public async Task<IActionResult> DeleteMission(int id, int gameId)
+        {
+            try
+            {
+                await _missionService.DeleteMission(id, gameId);
+            }
+            catch (Exception error)
+            {
+                return NotFound(new ProblemDetails { Detail = error.Message });
+            }
+            return NoContent();
+        }    
         /// <summary>
         /// Updates a Mission entity
         /// </summary>
@@ -70,8 +87,8 @@ namespace HvZAPI.Controllers
         {
             if (id != updatedMission.Id)
                 return BadRequest();
-            var Mission = _mapper.Map<Mission>(updatedMission);
-            var result = await _missionService.UpdateMission(Mission, gameId);
+            var mission = _mapper.Map<Mission>(updatedMission);
+            var result = await _missionService.UpdateMission(mission, gameId);
             return Ok(_mapper.Map<MissionDTO>(result));
         }
     }
