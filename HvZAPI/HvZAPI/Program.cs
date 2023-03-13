@@ -1,8 +1,10 @@
 using HvZAPI.Contexts;
 using HvZAPI.Services.Concrete;
 using HvZAPI.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 
@@ -57,9 +59,32 @@ internal class Program
             options.IncludeXmlComments(xmlPath);
         });
 
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(opt =>
+            {
+                opt.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidIssuer = builder.Configuration["TokenSecrets:IssuerUrl"],
+                    ValidAudience = "account",
+                    IssuerSigningKeyResolver = (token, securityToken, kid, parameters) =>
+                    {
+                        var client = new HttpClient();
+                        var keyuri = builder.Configuration["TokenSecrets:KeyUrl"];
+
+                        var response = client.GetAsync(keyuri).Result;
+                        var responseString = response.Content.ReadAsStringAsync().Result;
+                        var keys = new JsonWebKeySet(responseString);
+                        return keys.Keys;
+                    }
+                };
+            });
+
         builder.Services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
 
         var app = builder.Build();
+        app.UseCors();
 
 
         // Configure the HTTP request pipeline.
@@ -72,11 +97,11 @@ internal class Program
 
         app.UseHttpsRedirection();
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapControllers();
 
         app.Run();
-        app.UseCors();
     }
 }
