@@ -30,7 +30,7 @@ namespace HvZAPI.Services.Concrete
 
         public async Task<Mission> GetMissionById(int id, int gameId)
         {
-            var mission = await _context.Missions.Include(x => x.Game).FirstOrDefaultAsync(x => x.Id == id);
+            var mission = await _context.Missions.Include(x => x.Game).Where(x => x.GameId == gameId).FirstOrDefaultAsync(x => x.Id == id);
             if (mission is null)
                 throw new Exception("Mission not found");
             return mission;
@@ -38,7 +38,7 @@ namespace HvZAPI.Services.Concrete
 
         public async Task<IEnumerable<Mission>> GetMissions(int gameId)
         {
-            return await _context.Missions.Include(x => x.Game).ToListAsync();
+            return await _context.Missions.Include(x => x.Game).Where(x => x.GameId == gameId).ToListAsync();
         }
 
         public async Task<Mission> UpdateMission(Mission mission, int gameId)
