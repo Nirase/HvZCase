@@ -22,9 +22,9 @@ namespace HvZAPI.Contexts
                 );
 
             modelBuilder.Entity<Game>().HasData(
-                new Game { Id = 1, Name = "Base Game", Description = "A basic game of HvZ", StartDate = "2022-04-21", EndDate="2035-02-12", Location = "Ryttersgatan 8, 242 31 Hörby", GameState = "Registration" },
-                new Game { Id = 2, Name = "Playing Game", Description = "A basic currently running game of HvZ", StartDate="2021-12-01", Location = "Pärup, 242 91", EndDate="2022-04-23", GameState = "InProgress" },
-                new Game { Id = 3, Name = "Completed Game", Description = "A basic completed game of HvZ", StartDate = "2020-01-01", Location = "Baltzarsgatan 41 A, 211 36 Malmö", EndDate ="2020-01-04", GameState = "Completed" }
+                new Game { Id = 1, Name = "Base Game", Description = "A basic game of HvZ", StartDate = "2022-04-21", EndDate="2035-02-12", Location = "Ryttersgatan 8, 242 31 Hörby", Radius = 1000, GameState = "Registration" },
+                new Game { Id = 2, Name = "Playing Game", Description = "A basic currently running game of HvZ", StartDate="2021-12-01", Location = "Pärup, 242 91", EndDate="2022-04-23", Radius = 1000, GameState = "InProgress" },
+                new Game { Id = 3, Name = "Completed Game", Description = "A basic completed game of HvZ", StartDate = "2020-01-01", Location = "Baltzarsgatan 41 A, 211 36 Malmö", Radius = 1000, EndDate ="2020-01-04", GameState = "Completed" }
                 );
 
             modelBuilder.Entity<Mission>().HasData(
