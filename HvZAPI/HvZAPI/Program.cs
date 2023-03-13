@@ -31,6 +31,16 @@ internal class Program
         builder.Services.AddTransient<IMissionService, MissionService>();
         builder.Services.AddEndpointsApiExplorer();
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+ policy =>
+ {
+     policy.WithOrigins("http://localhost:3000")
+     .AllowAnyHeader()
+     .AllowAnyMethod();
+ });
+});
 
         var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
         var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
