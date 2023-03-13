@@ -51,9 +51,9 @@ namespace HvZAPI.Contexts
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Kill>().HasData(
-                new Kill { Id = 1, GameId = 1, KillerId = 1, VictimId = 2, TimeOfDeath = "2023-03-06"},
-                new Kill { Id = 2, GameId = 3, KillerId = 8, VictimId = 7, TimeOfDeath = "2023-03-01" },
-                new Kill { Id = 3, GameId = 3, KillerId = 8, VictimId = 9, TimeOfDeath = "2023-03-30" }
+                new Kill { Id = 1, GameId = 1, KillerId = 1, VictimId = 2, TimeOfDeath = "2023-03-06", Location = "Ryttersgatan 8, 242 31 Hörby" },
+                new Kill { Id = 2, GameId = 3, KillerId = 8, VictimId = 7, TimeOfDeath = "2023-03-01", Location = "Baltzarsgatan 43 A, 211 36 Malmö" },
+                new Kill { Id = 3, GameId = 3, KillerId = 8, VictimId = 9, TimeOfDeath = "2023-03-30", Location = "Baltzarsgatan 40 A, 211 36 Malmö" }
                 );
         }
 

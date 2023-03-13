@@ -47,6 +47,7 @@ namespace HvZAPI.Profiles
                         Id= x.Id,
                         KillerId = x.KillerId,
                         TimeOfDeath= x.TimeOfDeath,
+                        Location= x.Location,
                         VictimId = x.VictimId
                     }));
                 })
