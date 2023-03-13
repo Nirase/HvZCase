@@ -2,6 +2,7 @@
 using HvZAPI.Models;
 using HvZAPI.Models.DTOs.GameDTOs;
 using HvZAPI.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using System.Runtime.InteropServices;
@@ -39,6 +40,7 @@ namespace HvZAPI.Controllers
         /// </summary>
         /// <returns>Detailed game entities</returns>
         [HttpGet("withdetails")]
+        [Authorize(Roles = "user")]
         public async Task<ActionResult<IEnumerable<DetailedGameDTO>>> GetGamesDetailed()
         {
             return Ok(_mapper.Map<IEnumerable<DetailedGameDTO>>(await _gameService.GetGames()));
@@ -49,6 +51,7 @@ namespace HvZAPI.Controllers
         /// <param name="id">Entity id</param>
         /// <returns>Found game entity</returns>
         [HttpGet("{id}")]
+        [Authorize(Roles ="user")]
         public async Task<ActionResult<GameDTO>> GetGameById(int id)
         {
             try
@@ -70,6 +73,7 @@ namespace HvZAPI.Controllers
         /// <param name="id">Entity id</param>
         /// <returns>Found game entity</returns>
         [HttpGet("{id}/withdetails")]
+        [Authorize(Roles = "user")]
         public async Task<ActionResult<DetailedGameDTO>> GetGameWithDetailsById(int id)
         {
             try
@@ -91,6 +95,7 @@ namespace HvZAPI.Controllers
         /// <param name="createGameDTO">Game entity to create</param>
         /// <returns>Fully created game entity</returns>
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<Game>> CreateGame(CreateGameDTO createGameDTO)
         {
             var game = _mapper.Map<Game>(createGameDTO);
@@ -105,6 +110,7 @@ namespace HvZAPI.Controllers
         /// <param name="updatedGame">Values to update with</param>
         /// <returns>Complete updated game entity</returns>
         [HttpPut("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<GameDTO>> UpdateGame(int id, UpdateGameDTO updatedGame)
         {
             if(id != updatedGame.Id)
@@ -120,6 +126,7 @@ namespace HvZAPI.Controllers
         /// <param name="id">Id of entity to delete</param>
         /// <returns>NoContent or NotFound</returns>
         [HttpDelete]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteGame(int id)
         {
             try
