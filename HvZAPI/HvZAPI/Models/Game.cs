@@ -8,6 +8,7 @@
         public string GameState { get; set; }
         public string StartDate { get; set; }
         public string EndDate { get; set; }
+        public float Radius { get; set; }
         public string Location { get; set; }
         public ICollection<Player> Players { get; set; }
         public ICollection<Kill> Kills { get; set; }
