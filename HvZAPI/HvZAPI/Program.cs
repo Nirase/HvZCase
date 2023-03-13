@@ -28,6 +28,7 @@ internal class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddTransient<IGameService, GameService>();
         builder.Services.AddTransient<IKillService, KillService>();
+        builder.Services.AddTransient<IMissionService, MissionService>();
         builder.Services.AddEndpointsApiExplorer();
 
 
