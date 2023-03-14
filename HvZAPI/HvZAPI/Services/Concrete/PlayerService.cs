@@ -13,7 +13,7 @@ namespace HvZAPI.Services.Concrete
             _context = context;
         }
 
-        public async Task<Player> AddPlayer(int gameId, Player player, int userId)
+        public async Task<Player> AddPlayer(int gameId, Player player)
         {
             var game = await _context.Games.FirstOrDefaultAsync(x => x.Id == gameId);
             if (game is null)
@@ -22,16 +22,15 @@ namespace HvZAPI.Services.Concrete
             player.IsHuman = true;
             player.IsPatientZero = false;
             player.GameId= gameId;
-            player.UserId= userId;
 
-            var users = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+            var users = await _context.Users.FirstOrDefaultAsync(x => x.Id == player.UserId);
             if(users is null)
                 throw new Exception("User not found");
 
             var existingPlayers = await GetPlayers(gameId);
             foreach (var existingPlayer in existingPlayers)
             {
-                if(existingPlayer.UserId == userId)
+                if(existingPlayer.UserId == player.UserId)
                 {
                     throw new Exception("Player already in game");
                 }
@@ -48,7 +47,6 @@ namespace HvZAPI.Services.Concrete
             var game = await _context.Games.FirstOrDefaultAsync(x => x.Id == gameId);
             if (game is null)
                 throw new Exception("Game not found");
-            //game.Players.Remove(player);
             _context.Players.Remove(player);
             await _context.SaveChangesAsync();
         }

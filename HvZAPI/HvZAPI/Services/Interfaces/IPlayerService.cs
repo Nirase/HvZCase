@@ -17,10 +17,12 @@ namespace HvZAPI.Services.Interfaces
         Task<Player> GetPlayer(int gameId, int playerId);
 
         /// <summary>
-        /// Fetches a player in a game based on id
+        /// 
         /// </summary>
-        /// <returns> Player entity </returns>
-        Task<Player> AddPlayer(int gameId, Player player, int userId);
+        /// <param name="gameId"></param>
+        /// <param name="player"></param>
+        /// <returns></returns>
+        Task<Player> AddPlayer(int gameId, Player player);
 
         /// <summary>
         /// Fetches a player in a game based on id

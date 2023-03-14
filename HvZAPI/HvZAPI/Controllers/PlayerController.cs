@@ -39,11 +39,11 @@ namespace HvZAPI.Controllers
 
         [HttpPost]
         [ActionName(nameof(GetPlayerById))]
-        public async Task<ActionResult<Player>> CreatePlayer(int gameId, CreatePlayerDTO createPlayerDTO, int userId)
+        public async Task<ActionResult<PlayerDTO>> CreatePlayer(int gameId, CreatePlayerDTO createPlayerDTO)
         {
             var player = _mapper.Map<Player>(createPlayerDTO);
-            await _playerService.AddPlayer(gameId, player, userId);
-            return CreatedAtAction(nameof(GetPlayerById), new { id = player.Id }, player);
+            await _playerService.AddPlayer(gameId, player);
+            return CreatedAtAction(nameof(GetPlayerById), new { id = player.Id }, _mapper.Map<PlayerDTO>(player));
         }
 
         [HttpPut("{id}")]
