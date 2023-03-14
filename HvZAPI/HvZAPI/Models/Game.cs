@@ -13,6 +13,6 @@
         public ICollection<Player> Players { get; set; }
         public ICollection<Kill> Kills { get; set; }
         public ICollection<Mission> Missions { get; set; }
-
+        public ICollection<Channel> Channels { get; set; }
     }
 }

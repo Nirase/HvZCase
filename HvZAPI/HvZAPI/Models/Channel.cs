@@ -1,14 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 namespace HvZAPI.Models
-{ 
-
-    [PrimaryKey(nameof(Channel), nameof(GameId))]
-    public class Chat
+{
+    public class Channel
     {
-        public string Channel { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
         public int GameId { get; set; }
         public Game Game { get; set; }
         public ICollection<ChatMessage> Messages { get; set; }
     }
 }
+
+/*
+ * On channel creation -> Check if name exists
+ * If it does deny request
+ */
