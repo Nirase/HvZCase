@@ -5,8 +5,8 @@
         public int Id { get; set; }
         public int ChannelId { get; set; }
         public Channel Channel { get; set; }
-        public int SenderId { get; set; }
-        public Player Sender { get; set; }
+        public Player Player { get; set; }
+        public int PlayerId { get; set; }
         public string Contents { get; set; }
     }
 }

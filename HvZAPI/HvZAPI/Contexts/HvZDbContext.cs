@@ -49,6 +49,11 @@ namespace HvZAPI.Contexts
                 .WithMany()
                 .HasForeignKey(k => k.KillerId)
                 .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<ChatMessage>()
+                .HasOne(p => p.Player)
+                .WithMany()
+                .HasForeignKey(p => p.PlayerId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Kill>().HasData(
                 new Kill { Id = 1, GameId = 1, KillerId = 1, VictimId = 2, TimeOfDeath = "2023-03-06", Location = "Ryttersgatan 8, 242 31 Hörby" },
