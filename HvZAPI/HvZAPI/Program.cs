@@ -24,15 +24,26 @@ internal class Program
             builder.Configuration.GetConnectionString("SERVER_CONNECTION")
             )
         );
-        
+
         builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddTransient<IGameService, GameService>();
         builder.Services.AddTransient<IKillService, KillService>();
         builder.Services.AddTransient<IMissionService, MissionService>();
+        builder.Services.AddTransient<IPlayerService, PlayerService>();
         builder.Services.AddEndpointsApiExplorer();
 
+        builder.Services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(
+         policy =>
+         {
+             policy.WithOrigins("http://localhost:3000")
+             .AllowAnyHeader()
+             .AllowAnyMethod();
+         });
+        });
 
         var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
         var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
@@ -101,6 +112,8 @@ internal class Program
         app.UseAuthorization();
 
         app.MapControllers();
+        app.UseCors();
+        app.Run();
 
         app.Run();
     }
