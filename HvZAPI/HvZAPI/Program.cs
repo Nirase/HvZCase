@@ -114,7 +114,5 @@ internal class Program
         app.MapControllers();
         app.UseCors();
         app.Run();
-
-        app.Run();
     }
 }
