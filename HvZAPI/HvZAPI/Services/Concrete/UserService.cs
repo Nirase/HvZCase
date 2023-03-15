@@ -48,6 +48,14 @@ namespace HvZAPI.Services.Concrete
             return user;
         }
 
+        public async Task<User> GetUserByKeycloakId(string keycloakId)
+        {
+            var user = await _context.Users.Include(x => x.Players).FirstOrDefaultAsync(x => x.KeycloakId == keycloakId);
+            if (user is null)
+                throw new Exception("User not found");
+            return user;
+        }
+
         public async Task<IEnumerable<User>> GetUsers()
         {
             return await _context.Users.Include(x => x.Players).ToListAsync();
