@@ -19,14 +19,13 @@ namespace HvZAPI.Services.Concrete
             if (game is null)
                 throw new Exception("Game not found");
 
-            player.IsHuman = true;
-            player.IsPatientZero = false;
-            player.GameId= gameId;
+            //player.IsHuman = true;
+            //player.IsPatientZero = false;
+            //player.GameId= gameId;
 
             var users = await _context.Users.FirstOrDefaultAsync(x => x.Id == player.UserId);
             if(users is null)
                 throw new Exception("User not found");
-
             var existingPlayers = await GetPlayers(gameId);
             foreach (var existingPlayer in existingPlayers)
             {

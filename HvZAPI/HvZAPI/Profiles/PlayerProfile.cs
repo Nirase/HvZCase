@@ -35,15 +35,7 @@ namespace HvZAPI.Profiles
 
             CreateMap<CreatePlayerDTO, Player>();
 
-            CreateMap<UpdatePlayerDTO, Player>()
-                .ForMember(dto => dto.IsHuman, options =>
-                {
-                    options.MapFrom(src => src.IsHuman);
-                })
-                .ForMember(dto => dto.IsPatientZero, options =>
-                {
-                    options.MapFrom(src => src.IsPatientZero);
-                });
+            CreateMap<UpdatePlayerDTO, Player>();
 
         }
     }

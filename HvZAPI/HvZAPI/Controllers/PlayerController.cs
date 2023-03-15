@@ -4,7 +4,9 @@ using HvZAPI.Models.DTOs.GameDTOs;
 using HvZAPI.Models.DTOs.PlayerDTOs;
 using HvZAPI.Services.Concrete;
 using HvZAPI.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 using System.Net.Mime;
 
 namespace HvZAPI.Controllers
@@ -26,19 +28,22 @@ namespace HvZAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "user")]
         public async Task<ActionResult<IEnumerable<PlayerDTO>>> GetPlayers(int gameId)
         {
             return Ok(_mapper.Map<IEnumerable<PlayerDTO>>(await _playerService.GetPlayers(gameId)));
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<PlayerDTO>> GetPlayerById(int gameId, int playerId)
+        [Authorize(Roles = "user")]
+        public async Task<ActionResult<PlayerDTO>> GetPlayerById(int gameId, int id)
         {
-            return Ok(_mapper.Map<PlayerDTO>(await _playerService.GetPlayer(gameId, playerId)));
+            return Ok(_mapper.Map<PlayerDTO>(await _playerService.GetPlayer(gameId, id)));
         }
 
         [HttpPost]
         [ActionName(nameof(GetPlayerById))]
+        [Authorize(Roles = "user")]
         public async Task<ActionResult<PlayerDTO>> CreatePlayer(int gameId, CreatePlayerDTO createPlayerDTO)
         {
             var player = _mapper.Map<Player>(createPlayerDTO);
@@ -47,6 +52,7 @@ namespace HvZAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<PlayerDTO>> UpdatePlayer(int gameId, UpdatePlayerDTO updatedPlayer)
         {
             var player = _mapper.Map<Player>(updatedPlayer);
@@ -55,6 +61,7 @@ namespace HvZAPI.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeletePlayer(int gameId, int playerId)
         {
             try
