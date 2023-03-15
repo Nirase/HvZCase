@@ -72,5 +72,24 @@ namespace HvZAPI.Controllers
             return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
         }
 
+        /// <summary>
+        /// Deletes an existing User entity and all players and kills included in it 
+        /// </summary>
+        /// <param name="id">Id of entity to delete</param>
+        /// <returns>NoContent or NotFound</returns>
+        [HttpDelete]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            try
+            {
+                await _userService.DeleteUser(id);
+            }
+            catch (Exception error)
+            {
+                return NotFound(new ProblemDetails { Detail = error.Message });
+            }
+            return NoContent();
+        }
+
     }
 }
