@@ -11,6 +11,9 @@ namespace HvZAPI.Contexts
         public DbSet<User> Users { get; set; }
         public DbSet<Mission> Missions { get; set; }
 
+        public DbSet<Channel> Channels { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
+
         public HvZDbContext(DbContextOptions options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -60,6 +63,14 @@ namespace HvZAPI.Contexts
                 new Kill { Id = 2, GameId = 3, KillerId = 8, VictimId = 7, TimeOfDeath = "2023-03-01", Location = "Baltzarsgatan 43 A, 211 36 Malmö" },
                 new Kill { Id = 3, GameId = 3, KillerId = 8, VictimId = 9, TimeOfDeath = "2023-03-30", Location = "Baltzarsgatan 40 A, 211 36 Malmö" }
                 );
+
+            modelBuilder.Entity<Channel>().HasData(
+                new Channel { Id = 1, GameId = 1, Name = "Global"},
+                new Channel { Id = 2, GameId = 1, Name = "Humans" },
+                new Channel { Id = 3, GameId = 1, Name = "Zombies" }
+                );
+
+
         }
 
     }
