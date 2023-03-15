@@ -24,5 +24,6 @@ namespace HvZAPI.Controllers
             _userService = userService;
             _mapper = mapper;
         }
+
     }
 }
