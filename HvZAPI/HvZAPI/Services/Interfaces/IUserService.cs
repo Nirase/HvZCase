@@ -14,7 +14,7 @@ namespace HvZAPI.Services.Interfaces
         /// Fetches a User in a game based on id
         /// </summary>
         /// <returns> User entity </returns>
-        Task<User> GetUser(int UserId);
+        Task<User> GetUserById(int UserId);
 
         /// <summary>
         /// 

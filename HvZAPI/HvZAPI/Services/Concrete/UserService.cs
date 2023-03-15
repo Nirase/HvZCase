@@ -23,9 +23,12 @@ namespace HvZAPI.Services.Concrete
             throw new NotImplementedException();
         }
 
-        public Task<User> GetUser(int UserId)
+        public async Task<User> GetUserById(int UserId)
         {
-            throw new NotImplementedException();
+            var user = await _context.Users.Include(x => x.Players).FirstOrDefaultAsync(x => x.Id == UserId);
+            if (user is null)
+                throw new Exception("User not found");
+            return user;
         }
 
         public async Task<IEnumerable<User>> GetUsers()

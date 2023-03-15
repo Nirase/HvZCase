@@ -8,6 +8,7 @@ using System.Data;
 using System.Net.Mime;
 using HvZAPI.Models.DTOs.UserDTOs;
 using HvZAPI.Services.Concrete;
+using HvZAPI.Models.DTOs.UserDTOs;
 
 namespace HvZAPI.Controllers
 {
@@ -36,7 +37,26 @@ namespace HvZAPI.Controllers
         {
             return Ok(_mapper.Map<IEnumerable<UserDTO>>(await _userService.GetUsers()));
         }
-
+        /// <summary>
+        /// Fetches a User entity based on id
+        /// </summary>
+        /// <param name="id">Entity id</param>
+        /// <returns>Found User entity</returns>
+        [HttpGet("{id}")]
+        public async Task<ActionResult<UserDTO>> GetUserById(int id)
+        {
+            try
+            {
+                return Ok(_mapper.Map<UserDTO>(await _userService.GetUserById(id)));
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new ProblemDetails
+                {
+                    Detail = ex.Message
+                });
+            }
+        }
 
     }
 }
