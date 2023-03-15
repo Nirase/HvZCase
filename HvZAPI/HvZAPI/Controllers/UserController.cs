@@ -6,11 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Net.Mime;
-using HvZAPI.Models.DTOs.UserDTOs;
 using HvZAPI.Services.Concrete;
-using HvZAPI.Models.DTOs.UserDTOs;
-using HvZAPI.Models.DTOs.UserDTOs;
-using HvZAPI.Models.DTOs.UserDTOs;
 
 namespace HvZAPI.Controllers
 {
@@ -35,7 +31,7 @@ namespace HvZAPI.Controllers
         /// </summary>
         /// <returns>Enumerable of all Users</returns>
         [HttpGet]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "user")]
         public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsers()
         {
             return Ok(_mapper.Map<IEnumerable<UserDTO>>(await _userService.GetUsers()));
@@ -46,7 +42,7 @@ namespace HvZAPI.Controllers
         /// <param name="id">Entity id</param>
         /// <returns>Found User entity</returns>
         [HttpGet("{id}")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "user")]
         public async Task<ActionResult<UserDTO>> GetUserById(int id)
         {
             try
@@ -68,7 +64,8 @@ namespace HvZAPI.Controllers
         /// <param name="id">Keycloak entity id</param>
         /// <returns>Found User entity</returns>
         [HttpGet("/keycloak/{id}")]
-        public async Task<ActionResult<UserDTO>> GetUserById(string id)
+        [Authorize(Roles = "user")]
+        public async Task<ActionResult<UserDTO>> GetUserByKeycloakId(string id)
         {
             try
             {
