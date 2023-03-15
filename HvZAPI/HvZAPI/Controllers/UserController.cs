@@ -63,6 +63,27 @@ namespace HvZAPI.Controllers
         }
 
         /// <summary>
+        /// Fetches a User entity based on keycloakId
+        /// </summary>
+        /// <param name="id">Keycloak entity id</param>
+        /// <returns>Found User entity</returns>
+        [HttpGet("/keycloak/{id}")]
+        public async Task<ActionResult<UserDTO>> GetUserById(string id)
+        {
+            try
+            {
+                return Ok(_mapper.Map<UserDTO>(await _userService.GetUserByKeycloakId(id)));
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new ProblemDetails
+                {
+                    Detail = ex.Message
+                });
+            }
+        }
+
+        /// <summary>
         /// Creates a new User entity
         /// </summary>
         /// <param name="createUserDTO">User entity to create</param>
