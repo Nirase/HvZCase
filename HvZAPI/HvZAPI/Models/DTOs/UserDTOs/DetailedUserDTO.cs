@@ -6,6 +6,7 @@ namespace HvZAPI.Models.DTOs.UserDTOs
     public class DetailedUserDTO
     {
         public int Id { get; set; }
+        public string KeycloakId { get; set; }
 
         [MaxLength(30)]
         public string FirstName { get; set; }
