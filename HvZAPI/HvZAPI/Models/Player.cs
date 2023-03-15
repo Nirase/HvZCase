@@ -1,4 +1,6 @@
-﻿namespace HvZAPI.Models
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace HvZAPI.Models
 {
     public class Player
     {
@@ -7,6 +9,7 @@
         public bool IsPatientZero { get; set; }
         public string BiteCode { get; set; }
         public int UserId { get; set; }
+        [DeleteBehavior(DeleteBehavior.Cascade)]
         public User User { get; set; }
         public int GameId { get; set; }
 

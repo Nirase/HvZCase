@@ -33,6 +33,7 @@ internal class Program
         builder.Services.AddTransient<IMissionService, MissionService>();
         builder.Services.AddTransient<IPlayerService, PlayerService>();
         builder.Services.AddTransient<IChatMessageService, ChatMessageService>();
+        builder.Services.AddTransient<IUserService, UserService>();
         builder.Services.AddTransient<IChannelService, ChannelService>();
         builder.Services.AddEndpointsApiExplorer();
 

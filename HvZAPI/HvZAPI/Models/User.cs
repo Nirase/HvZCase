@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace HvZAPI.Models
 {
@@ -11,7 +12,7 @@ namespace HvZAPI.Models
 
         [MaxLength(30)]
         public string LastName { get; set; }
-
-        ICollection<Player> Players { get; set; }
+        [DeleteBehavior(DeleteBehavior.Cascade)]
+        public ICollection<Player> Players { get; set; }
     }
 }
