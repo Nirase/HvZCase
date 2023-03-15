@@ -35,10 +35,12 @@ namespace HvZAPI.Contexts
                 new Mission { Id = 2, Name = "Loot!", Description = "Loot the local grocery store", GameId = 1, StartDate = "2022-03-11", EndDate = "2022-03-12", VisibleToHumans = true, VisibleToZombies = false, Location = "Ryttersgatan 3, 242 31 Hörby" },
                 new Mission { Id = 3, Name = "Investigate!", Description = "A large noise was heard nearby, investigate the area to find out what caused it. Beware! The noise might have attracted zombies.", GameId = 1, StartDate = "2022-03-11", EndDate = "2022-03-12", VisibleToHumans = true, VisibleToZombies = true, Location = "Lågedammsgatan 23, 242 31 Hörby" }
                 );
-
+            modelBuilder.Entity<Squad>().HasData(
+                new Squad { Id = 1, Name = "Cool cats" }
+                );
             modelBuilder.Entity<Player>().HasData(
-                new Player { Id = 1, GameId = 1, UserId = 1, IsHuman = false, IsPatientZero = true, BiteCode = "base"},
-                new Player { Id = 2, GameId = 1, UserId = 2, IsHuman = false, IsPatientZero = false, BiteCode = "bite" },
+                new Player { Id = 1, GameId = 1, UserId = 1, IsHuman = false, IsPatientZero = true, BiteCode = "base", SquadId = 1},
+                new Player { Id = 2, GameId = 1, UserId = 2, IsHuman = false, IsPatientZero = false, BiteCode = "bite", SquadId = 1 },
                 new Player { Id = 3, GameId = 1, UserId = 3, IsHuman = true, IsPatientZero = false, BiteCode = "safe" },
                 new Player { Id = 4, GameId = 2, UserId = 1, IsHuman = true, IsPatientZero = false, BiteCode = "base" },
                 new Player { Id = 5, GameId = 2, UserId = 2, IsHuman = false, IsPatientZero = true, BiteCode = "bite" },
