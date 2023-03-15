@@ -10,6 +10,7 @@ using HvZAPI.Models.DTOs.UserDTOs;
 using HvZAPI.Services.Concrete;
 using HvZAPI.Models.DTOs.UserDTOs;
 using HvZAPI.Models.DTOs.UserDTOs;
+using HvZAPI.Models.DTOs.UserDTOs;
 
 namespace HvZAPI.Controllers
 {
@@ -89,6 +90,22 @@ namespace HvZAPI.Controllers
                 return NotFound(new ProblemDetails { Detail = error.Message });
             }
             return NoContent();
+        }
+
+        /// <summary>
+        /// Updates a User entity
+        /// </summary>
+        /// <param name="id">Id of entity to update</param>
+        /// <param name="updatedUser">Values to update with</param>
+        /// <returns>Complete updated User entity</returns>
+        [HttpPut("{id}")]
+        public async Task<ActionResult<UserDTO>> UpdateUser(int id, UpdateUserDTO updatedUser)
+        {
+            if (id != updatedUser.Id)
+                return BadRequest();
+            var User = _mapper.Map<User>(updatedUser);
+            var result = await _userService.UpdateUser(User);
+            return Ok(_mapper.Map<UserDTO>(result));
         }
 
     }

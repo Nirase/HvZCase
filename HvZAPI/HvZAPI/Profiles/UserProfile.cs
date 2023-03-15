@@ -15,6 +15,7 @@ namespace HvZAPI.Profiles
                     options.MapFrom(src => src.Players.Select(x => $"api/v1/game/{x.GameId}/player/{x.Id}"));
                 });
             CreateMap<CreateUserDTO, User>();
+            CreateMap<UpdateUserDTO, User>();
         }
     }
 }

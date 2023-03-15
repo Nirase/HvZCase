@@ -53,9 +53,14 @@ namespace HvZAPI.Services.Concrete
             return await _context.Users.Include(x => x.Players).ToListAsync();
         }
 
-        public Task<User> UpdateUser(User User)
+        public async Task<User> UpdateUser(User user)
         {
-            throw new NotImplementedException();
+            var foundUser = await GetUserById(user.Id);
+            foundUser.FirstName = user.FirstName;
+            foundUser.LastName = user.LastName;
+            _context.Entry(foundUser).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return foundUser;
         }
     }
 }
