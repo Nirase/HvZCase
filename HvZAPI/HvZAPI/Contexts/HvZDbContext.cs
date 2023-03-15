@@ -11,14 +11,17 @@ namespace HvZAPI.Contexts
         public DbSet<User> Users { get; set; }
         public DbSet<Mission> Missions { get; set; }
 
+        public DbSet<Channel> Channels { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
+
         public HvZDbContext(DbContextOptions options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().HasData(
-                new User { Id = 1, FirstName = "Mattias", LastName = "Smedman"},
-                new User { Id = 2, FirstName = "Danielle", LastName = "Hamrin" },
-                new User { Id = 3, FirstName = "Keman", LastName = "Nguyen" }
+                new User { Id = 1, KeycloakId = "one", FirstName = "Mattias", LastName = "Smedman"},
+                new User { Id = 2, KeycloakId = "two", FirstName = "Danielle", LastName = "Hamrin" },
+                new User { Id = 3, KeycloakId = "three", FirstName = "Keman", LastName = "Nguyen" }
                 );
 
             modelBuilder.Entity<Game>().HasData(
@@ -32,10 +35,12 @@ namespace HvZAPI.Contexts
                 new Mission { Id = 2, Name = "Loot!", Description = "Loot the local grocery store", GameId = 1, StartDate = "2022-03-11", EndDate = "2022-03-12", VisibleToHumans = true, VisibleToZombies = false, Location = "Ryttersgatan 3, 242 31 Hörby" },
                 new Mission { Id = 3, Name = "Investigate!", Description = "A large noise was heard nearby, investigate the area to find out what caused it. Beware! The noise might have attracted zombies.", GameId = 1, StartDate = "2022-03-11", EndDate = "2022-03-12", VisibleToHumans = true, VisibleToZombies = true, Location = "Lågedammsgatan 23, 242 31 Hörby" }
                 );
-
+            modelBuilder.Entity<Squad>().HasData(
+                new Squad { Id = 1, Name = "Cool cats" }
+                );
             modelBuilder.Entity<Player>().HasData(
-                new Player { Id = 1, GameId = 1, UserId = 1, IsHuman = false, IsPatientZero = true, BiteCode = "base"},
-                new Player { Id = 2, GameId = 1, UserId = 2, IsHuman = false, IsPatientZero = false, BiteCode = "bite" },
+                new Player { Id = 1, GameId = 1, UserId = 1, IsHuman = false, IsPatientZero = true, BiteCode = "base", SquadId = 1},
+                new Player { Id = 2, GameId = 1, UserId = 2, IsHuman = false, IsPatientZero = false, BiteCode = "bite", SquadId = 1 },
                 new Player { Id = 3, GameId = 1, UserId = 3, IsHuman = true, IsPatientZero = false, BiteCode = "safe" },
                 new Player { Id = 4, GameId = 2, UserId = 1, IsHuman = true, IsPatientZero = false, BiteCode = "base" },
                 new Player { Id = 5, GameId = 2, UserId = 2, IsHuman = false, IsPatientZero = true, BiteCode = "bite" },
@@ -60,6 +65,14 @@ namespace HvZAPI.Contexts
                 new Kill { Id = 2, GameId = 3, KillerId = 8, VictimId = 7, TimeOfDeath = "2023-03-01", Location = "Baltzarsgatan 43 A, 211 36 Malmö" },
                 new Kill { Id = 3, GameId = 3, KillerId = 8, VictimId = 9, TimeOfDeath = "2023-03-30", Location = "Baltzarsgatan 40 A, 211 36 Malmö" }
                 );
+
+            modelBuilder.Entity<Channel>().HasData(
+                new Channel { Id = 1, GameId = 1, Name = "Global"},
+                new Channel { Id = 2, GameId = 1, Name = "Humans" },
+                new Channel { Id = 3, GameId = 1, Name = "Zombies" }
+                );
+
+
         }
 
     }
