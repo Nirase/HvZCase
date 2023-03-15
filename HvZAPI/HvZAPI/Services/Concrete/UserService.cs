@@ -1,10 +1,18 @@
-﻿using HvZAPI.Models;
+﻿using HvZAPI.Contexts;
+using HvZAPI.Models;
 using HvZAPI.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace HvZAPI.Services.Concrete
 {
     public class UserService : IUserService
     {
+        private readonly HvZDbContext _context;
+        public UserService(HvZDbContext context)
+        {
+            _context = context;
+        }
+
         public Task<User> AddUser(User User)
         {
             throw new NotImplementedException();
@@ -20,9 +28,9 @@ namespace HvZAPI.Services.Concrete
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<User>> GetUsers()
+        public async Task<IEnumerable<User>> GetUsers()
         {
-            throw new NotImplementedException();
+            return await _context.Users.Include(x => x.Players).ToListAsync();
         }
 
         public Task<User> UpdateUser(User User)

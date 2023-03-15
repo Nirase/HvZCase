@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Net.Mime;
+using HvZAPI.Models.DTOs.UserDTOs;
+using HvZAPI.Services.Concrete;
 
 namespace HvZAPI.Controllers
 {
@@ -24,6 +26,17 @@ namespace HvZAPI.Controllers
             _userService = userService;
             _mapper = mapper;
         }
+
+        /// <summary>
+        /// Fetches all Users
+        /// </summary>
+        /// <returns>Enumerable of all Users</returns>
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsers()
+        {
+            return Ok(_mapper.Map<IEnumerable<UserDTO>>(await _userService.GetUsers()));
+        }
+
 
     }
 }
