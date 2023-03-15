@@ -35,6 +35,7 @@ namespace HvZAPI.Controllers
         /// </summary>
         /// <returns>Enumerable of all Users</returns>
         [HttpGet]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsers()
         {
             return Ok(_mapper.Map<IEnumerable<UserDTO>>(await _userService.GetUsers()));
@@ -45,6 +46,7 @@ namespace HvZAPI.Controllers
         /// <param name="id">Entity id</param>
         /// <returns>Found User entity</returns>
         [HttpGet("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<UserDTO>> GetUserById(int id)
         {
             try
@@ -79,6 +81,7 @@ namespace HvZAPI.Controllers
         /// <param name="id">Id of entity to delete</param>
         /// <returns>NoContent or NotFound</returns>
         [HttpDelete]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             try
@@ -99,6 +102,7 @@ namespace HvZAPI.Controllers
         /// <param name="updatedUser">Values to update with</param>
         /// <returns>Complete updated User entity</returns>
         [HttpPut("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<UserDTO>> UpdateUser(int id, UpdateUserDTO updatedUser)
         {
             if (id != updatedUser.Id)
