@@ -9,6 +9,7 @@ using System.Net.Mime;
 using HvZAPI.Models.DTOs.UserDTOs;
 using HvZAPI.Services.Concrete;
 using HvZAPI.Models.DTOs.UserDTOs;
+using HvZAPI.Models.DTOs.UserDTOs;
 
 namespace HvZAPI.Controllers
 {
@@ -56,6 +57,19 @@ namespace HvZAPI.Controllers
                     Detail = ex.Message
                 });
             }
+        }
+
+        /// <summary>
+        /// Creates a new User entity
+        /// </summary>
+        /// <param name="createUserDTO">User entity to create</param>
+        /// <returns>Fully created User entity</returns>
+        [HttpPost]
+        public async Task<ActionResult<User>> CreateUser(CreateUserDTO createUserDTO)
+        {
+            var user = _mapper.Map<User>(createUserDTO);
+            await _userService.AddUser(user);
+            return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
         }
 
     }

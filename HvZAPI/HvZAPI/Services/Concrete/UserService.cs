@@ -13,9 +13,11 @@ namespace HvZAPI.Services.Concrete
             _context = context;
         }
 
-        public Task<User> AddUser(User User)
+        public async Task<User> AddUser(User user)
         {
-            throw new NotImplementedException();
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
+            return user;
         }
 
         public Task DeleteUser(int UserId)
