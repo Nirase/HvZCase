@@ -36,6 +36,18 @@ namespace HvZAPI.Controllers
         {
             return Ok(_mapper.Map<IEnumerable<UserDTO>>(await _userService.GetUsers()));
         }
+
+        /// <summary>
+        /// Fetches all Users
+        /// </summary>
+        /// <returns>Enumerable of all Users</returns>
+        [HttpGet("withdetails")]
+        [Authorize(Roles = "user")]
+        public async Task<ActionResult<IEnumerable<DetailedUserDTO>>> GetUsersWithDetails()
+        {
+            return Ok(_mapper.Map<IEnumerable<DetailedUserDTO>>(await _userService.GetUsers()));
+        }
+
         /// <summary>
         /// Fetches a User entity based on id
         /// </summary>
@@ -48,6 +60,28 @@ namespace HvZAPI.Controllers
             try
             {
                 return Ok(_mapper.Map<UserDTO>(await _userService.GetUserById(id)));
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new ProblemDetails
+                {
+                    Detail = ex.Message
+                });
+            }
+        }
+
+        /// <summary>
+        /// Fetches a User entity based on id
+        /// </summary>
+        /// <param name="id">Entity id</param>
+        /// <returns>Found User entity</returns>
+        [HttpGet("withdetails/{id}")]
+        [Authorize(Roles = "user")]
+        public async Task<ActionResult<DetailedUserDTO>> GetUserByIdWithDetails(int id)
+        {
+            try
+            {
+                return Ok(_mapper.Map<DetailedUserDTO>(await _userService.GetUserById(id)));
             }
             catch (Exception ex)
             {
