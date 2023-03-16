@@ -15,7 +15,7 @@ namespace HvZAPI.Services.Concrete
 
         public async Task<Kill> CreateKill(Kill kill, int gameId, string biteCode)
         {
-            var victim = await _context.Players.FirstOrDefaultAsync(p => p.BiteCode== biteCode);
+            var victim = await _context.Players.Where(x => x.GameId == gameId).FirstOrDefaultAsync(p => p.BiteCode== biteCode);
             if (victim is null)
                 throw new Exception("Victim not found");
 
