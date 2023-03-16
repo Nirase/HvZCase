@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using HvZAPI.Services.Concrete;
-using HvZAPI.Models.DTOs.SquadDTOs;
 
 namespace HvZAPI.Controllers
 {
@@ -60,6 +59,26 @@ namespace HvZAPI.Controllers
             var squad = _mapper.Map<Squad>(createSquadDTO);
             var created = await _squadService.CreateSquad(squad, gameId, creatorId);
             return CreatedAtAction(nameof(GetSquadById), new { id = created.Id }, _mapper.Map<SquadDTO>(created));
+        }
+
+
+        /// <summary>
+        /// Deletes an existing Squad entity
+        /// </summary>
+        /// <param name="id">Id of entity to delete</param>
+        /// <param name="gameId">Game to delete from</param>
+        [HttpDelete]
+        public async Task<IActionResult> DeleteSquad(int id, int gameId)
+        {
+            try
+            {
+                await _squadService.DeleteSquad(id, gameId);
+            }
+            catch (Exception error)
+            {
+                return NotFound(new ProblemDetails { Detail = error.Message });
+            }
+            return NoContent();
         }
     }
 }

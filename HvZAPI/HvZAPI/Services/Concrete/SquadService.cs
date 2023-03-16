@@ -31,9 +31,13 @@ namespace HvZAPI.Services.Concrete
             return squad;
         }
 
-        public Task DeleteSquad(int id, int gameId)
+        public async Task DeleteSquad(int id, int gameId)
         {
-            throw new NotImplementedException();
+            var foundSquad = await GetSquadById(id, gameId);
+            if (foundSquad == null)
+                throw new Exception("Squad not found");
+            _context.Squads.Remove(foundSquad);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<Squad> GetSquadById(int id, int gameId)
