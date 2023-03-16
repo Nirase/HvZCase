@@ -9,6 +9,7 @@ namespace HvZAPI.Profiles
         public KillProfile() 
         {
             CreateMap<UpdateKillDTO, Kill>();
+            CreateMap<CreateKillDTO, Kill>();
         }
     }
 }

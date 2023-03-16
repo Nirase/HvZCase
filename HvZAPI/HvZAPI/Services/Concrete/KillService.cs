@@ -13,23 +13,23 @@ namespace HvZAPI.Services.Concrete
             _context = context;
         }
 
-        public async Task<Kill> CreateKill(int killerId, int gameId, string biteCode)
+        public async Task<Kill> CreateKill(Kill kill, int gameId, string biteCode)
         {
             var victim = await _context.Players.FirstOrDefaultAsync(p => p.BiteCode== biteCode);
             if (victim is null)
                 throw new Exception("Victim not found");
 
-            var killer = await _context.Players.FirstOrDefaultAsync(p => p.Id == killerId);
+            var killer = await _context.Players.FirstOrDefaultAsync(p => p.Id == kill.KillerId);
             if (killer is null)
                 throw new Exception("Killer not found");
             if (killer.IsHuman || !victim.IsHuman)
                 throw new Exception("Invalid kill");
 
-            var kill = new Kill { GameId = gameId, TimeOfDeath = DateTime.Now.ToString(), KillerId = killerId, VictimId = victim.Id };
+            var killToMake = new Kill { GameId = gameId, TimeOfDeath = kill.TimeOfDeath, KillerId = kill.KillerId, VictimId = victim.Id, Description = kill.Description, Location = kill.Location };
             victim.IsHuman = false;
-            _context.Kills.Add(kill);
+            _context.Kills.Add(killToMake);
             await _context.SaveChangesAsync();
-            return kill;
+            return killToMake;
         }
 
         public async Task DeleteKill(int killId, int gameId)

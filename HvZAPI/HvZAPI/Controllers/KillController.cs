@@ -64,16 +64,17 @@ namespace HvZAPI.Controllers
         /// <summary>
         /// Creates a new Kill entity
         /// </summary>
-        /// <param name="biteCode">Supplied bite code</param>
-        /// <param name="killerId">Id of killer</param>
+        /// <param name="kill">Kill entity to create</param>
         /// <param name="gameId">Id of game</param>
         /// <returns>Fully created Kill entity</returns>
         [HttpPost]
+        [ActionName(nameof(GetKillById))]
         [Authorize(Roles = "user")]
-        public async Task<ActionResult<Kill>> CreateKill(int killerId, int gameId, string biteCode)
+        public async Task<ActionResult<Kill>> CreateKill(CreateKillDTO kill, int gameId)
         {
-            var kill = await _killService.CreateKill(killerId, gameId, biteCode);
-            return CreatedAtAction(nameof(GetKillById), new { id = kill.Id }, kill);
+            var dto = _mapper.Map<Kill>(kill);
+            var created = await _killService.CreateKill(dto, gameId, kill.BiteCode);
+            return CreatedAtAction(nameof(GetKillById), new { id = created.Id }, kill);
         }
 
 
