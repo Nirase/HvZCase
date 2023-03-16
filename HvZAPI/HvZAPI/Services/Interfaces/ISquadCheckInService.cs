@@ -21,7 +21,7 @@ namespace HvZAPI.Services.Interfaces
         /// Creates a new SquadCheckIn entity
         /// </summary>
         /// <returns>Created SquadCheckIn entity</returns>
-        Task<SquadCheckIn> CreateSquadCheckIn();
+        Task<SquadCheckIn> CreateSquadCheckIn(SquadCheckIn squadCheckIn, int gameId, int squadId);
 
         /// <summary>
         /// Deletes an existing SquadCheckIn entity

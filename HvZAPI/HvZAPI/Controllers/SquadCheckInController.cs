@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HvZAPI.Models;
 using HvZAPI.Models.DTOs.SquadCheckInDTOs;
+using HvZAPI.Models.DTOs.SquadDTOs;
 using HvZAPI.Services.Concrete;
 using HvZAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -56,6 +57,15 @@ namespace HvZAPI.Controllers
                     Detail = ex.Message
                 });
             }
+        }
+
+        [HttpPost]
+        [ActionName(nameof(GetSquadCheckInById))]
+        public async Task<ActionResult<SquadCheckInDTO>> CreateSquadCheckIn(int gameId, CreateSquadCheckInDTO createSquadCheckInDTO)
+        {
+            var squadCheckIn = _mapper.Map<SquadCheckIn>(createSquadCheckInDTO);
+            var created = await _squadCheckInService.CreateSquadCheckIn(squadCheckIn, gameId, createSquadCheckInDTO.SquadId);
+            return CreatedAtAction(nameof(GetSquadCheckInById), new { id = created.Id }, _mapper.Map<SquadCheckInDTO>(created));
         }
 
         /// <summary>

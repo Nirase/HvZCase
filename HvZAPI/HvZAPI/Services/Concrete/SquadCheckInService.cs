@@ -13,9 +13,11 @@ namespace HvZAPI.Services.Concrete
             _context = context;
         }
 
-        public Task<SquadCheckIn> CreateSquadCheckIn()
+        public async Task<SquadCheckIn> CreateSquadCheckIn(SquadCheckIn squadCheckIn, int gameId, int squadId)
         {
-            throw new NotImplementedException();
+            _context.SquadChecksIns.Add(squadCheckIn);
+            await _context.SaveChangesAsync();
+            return squadCheckIn;
         }
 
         public async Task DeleteSquadCheckIn(int id, int gameId, int squadId)
