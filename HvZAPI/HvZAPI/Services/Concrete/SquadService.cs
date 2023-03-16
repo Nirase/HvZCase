@@ -20,7 +20,7 @@ namespace HvZAPI.Services.Concrete
                 throw new Exception("Player not found");
             if (creator.SquadId != null)
                 throw new Exception("Player already in a squad");
-            var foundSquad = GetSquadByName(squad.Name, gameId);
+            var foundSquad = await GetSquadByName(squad.Name, gameId);
             if(foundSquad != null)
                 throw new Exception($"Squad with name {squad.Name} already exists");
 
@@ -61,9 +61,12 @@ namespace HvZAPI.Services.Concrete
             return await _context.Squads.Include(x => x.Players).Include(x => x.SquadCheckIns).Where(x => x.GameId == gameId).ToListAsync();
         }
 
-        public Task<Squad> UpdateSquad(Squad Squad, int gameId)
+        public async Task<Squad> UpdateSquad(Squad Squad, int gameId)
         {
-            throw new NotImplementedException();
+            var foundGame = await GetSquadById(Squad.Id, gameId);
+            foundGame.Name = Squad.Name;
+            await _context.SaveChangesAsync();
+            return foundGame;
         }
     }
 }

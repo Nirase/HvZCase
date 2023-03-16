@@ -19,6 +19,7 @@ namespace HvZAPI.Profiles
                 });
 
             CreateMap<CreateSquadDTO, Squad>();
+            CreateMap<UpdateSquadDTO, Squad>();
         }
     }
 }

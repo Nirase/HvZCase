@@ -80,5 +80,22 @@ namespace HvZAPI.Controllers
             }
             return NoContent();
         }
+
+        /// <summary>
+        /// Updates a Squad entity
+        /// </summary>
+        /// <param name="id">Id of entity to update</param>
+        /// <param name="updatedSquad">Values to update with</param>
+        /// <param name="gameId">Game id</param>
+        /// <returns>Complete updated Squad entity</returns>
+        [HttpPut("{id}")]
+        public async Task<ActionResult<SquadDTO>> UpdateSquad(int id, UpdateSquadDTO updatedSquad, int gameId)
+        {
+            if (id != updatedSquad.Id)
+                return BadRequest();
+            var squad = _mapper.Map<Squad>(updatedSquad);
+            var result = await _squadService.UpdateSquad(squad, gameId);
+            return Ok(_mapper.Map<SquadDTO>(result));
+        }
     }
 }
