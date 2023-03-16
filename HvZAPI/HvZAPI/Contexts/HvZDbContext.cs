@@ -11,6 +11,7 @@ namespace HvZAPI.Contexts
         public DbSet<User> Users { get; set; }
         public DbSet<Mission> Missions { get; set; }
         public DbSet<Squad> Squads { get; set; }
+        public DbSet<SquadCheckIn> SquadChecksIns { get; set; }
         public DbSet<Channel> Channels { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
 
@@ -37,6 +38,10 @@ namespace HvZAPI.Contexts
                 );
             modelBuilder.Entity<Squad>().HasData(
                 new Squad { Id = 1, Name = "Cool cats", GameId = 1 }
+                );
+            modelBuilder.Entity<SquadCheckIn>().HasData(
+                new SquadCheckIn { Id = 1, SquadId = 1, Location = "Ryttersgatan 14, 242 31 Hörby", StartDate = "2023-03-15", EndDate = "2024-01-01" },
+                new SquadCheckIn { Id = 2, SquadId = 1, Location = "Ryttersgatan 17, 242 31 Hörby", StartDate = "2023-02-15", EndDate = "2023-03-01" }
                 );
             modelBuilder.Entity<Player>().HasData(
                 new Player { Id = 1, GameId = 1, UserId = 1, IsHuman = false, IsPatientZero = true, BiteCode = "base", SquadId = 1},

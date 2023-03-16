@@ -35,6 +35,7 @@ internal class Program
         builder.Services.AddTransient<IChatMessageService, ChatMessageService>();
         builder.Services.AddTransient<IUserService, UserService>();
         builder.Services.AddTransient<ISquadService, SquadService>();
+        builder.Services.AddTransient<ISquadCheckInService, SquadCheckInService>();
         builder.Services.AddTransient<IChannelService, ChannelService>();
         builder.Services.AddEndpointsApiExplorer();
 

@@ -1,4 +1,6 @@
-﻿namespace HvZAPI.Services.Interfaces
+﻿using HvZAPI.Models;
+
+namespace HvZAPI.Services.Interfaces
 {
     public interface ISquadCheckInService
     {
