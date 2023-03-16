@@ -23,9 +23,12 @@ namespace HvZAPI.Services.Concrete
             throw new NotImplementedException();
         }
 
-        public Task<SquadCheckIn> GetSquadCheckInById(int id, int gameId, int squadId)
+        public async Task<SquadCheckIn> GetSquadCheckInById(int id, int gameId, int squadId)
         {
-            throw new NotImplementedException();
+            var checkIn = await _context.SquadChecksIns.Include(x => x.Squad).Where(x => x.SquadId == squadId).Where(x => x.Squad.GameId == gameId).FirstOrDefaultAsync(x => x.Id == id);
+            if (checkIn is null)
+                throw new Exception("SquadCheckIn not found");
+            return checkIn;
         }
 
         public async Task<IEnumerable<SquadCheckIn>> GetSquadCheckIns(int gameId, int squadId)

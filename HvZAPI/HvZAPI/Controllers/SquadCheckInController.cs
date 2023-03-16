@@ -36,5 +36,26 @@ namespace HvZAPI.Controllers
         {
             return Ok(_mapper.Map<IEnumerable<SquadCheckInDTO>>(await _squadCheckInService.GetSquadCheckIns(gameId, squadId)));
         }
+
+        /// <summary>
+        /// Fetches a SquadCheckIn entity based on id
+        /// </summary>
+        /// <param name="id">Entity id</param>
+        /// <returns>Found SquadCheckIn entity</returns>
+        [HttpGet("{id}")]
+        public async Task<ActionResult<SquadCheckInDTO>> GetSquadCheckInById(int id, int gameId, int squadId)
+        {
+            try
+            {
+                return Ok(_mapper.Map<SquadCheckInDTO>(await _squadCheckInService.GetSquadCheckInById(id, gameId, squadId)));
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new ProblemDetails
+                {
+                    Detail = ex.Message
+                });
+            }
+        }
     }
 }
