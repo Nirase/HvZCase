@@ -66,10 +66,24 @@ namespace HvZAPI.Services.Concrete
         public async Task<Player> UpdatePlayer(int gameId, Player player)
         {
             var foundPlayer = await GetPlayer(gameId, player.Id);
-            
-            foundPlayer.IsHuman = player.IsHuman;
+            if (foundPlayer.IsHuman && !player.IsHuman)
+            {
+                var kill = await _context.Kills.FirstOrDefaultAsync(x => x.VictimId == player.Id);
+                if (kill is null)
+                    throw new Exception("kill not found");
+
+                var game = await _context.Games.Include(x => x.Kills).FirstOrDefaultAsync(x => x.Id == gameId);
+                if (game is null)
+                    throw new Exception("Game not found");
+
+                var victim = await _context.Players.FirstOrDefaultAsync(x => x.Id == kill.VictimId);
+
+                if (victim is null)
+                    throw new Exception("Victim is null");
+                game.Kills.Remove(kill);
+                foundPlayer.IsHuman = player.IsHuman;
+            }
             foundPlayer.IsPatientZero = player.IsPatientZero;
-            
             await _context.SaveChangesAsync();
             return foundPlayer;
         }
