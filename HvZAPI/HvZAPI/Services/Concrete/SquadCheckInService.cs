@@ -18,9 +18,13 @@ namespace HvZAPI.Services.Concrete
             throw new NotImplementedException();
         }
 
-        public Task DeleteSquadCheckIn(int SquadCheckInId, int gameId, int squadId)
+        public async Task DeleteSquadCheckIn(int id, int gameId, int squadId)
         {
-            throw new NotImplementedException();
+            var foundCheckIn = await GetSquadCheckInById(id, gameId, squadId);
+            if(foundCheckIn is null)
+                throw new Exception("SquadCheckIn not found");
+            _context.SquadChecksIns.Remove(foundCheckIn);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<SquadCheckIn> GetSquadCheckInById(int id, int gameId, int squadId)
@@ -36,9 +40,5 @@ namespace HvZAPI.Services.Concrete
             return await _context.SquadChecksIns.Include(x => x.Squad).Where(x => x.SquadId == squadId).Where(x => x.Squad.GameId == gameId).ToListAsync();
         }
 
-        public Task<SquadCheckIn> UpdateSquadCheckIn(SquadCheckIn SquadCheckIn, int gameId, int squadId)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

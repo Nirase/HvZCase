@@ -30,12 +30,6 @@ namespace HvZAPI.Services.Interfaces
         /// <param name="gameId">Game entity to delete from</param>
         Task DeleteSquadCheckIn(int SquadCheckInId, int gameId, int squadId);
 
-        /// <summary>
-        /// Updates a SquadCheckIn entity
-        /// </summary>
-        /// <param name="SquadCheckIn">Updated SquadCheckIn entity</param>
-        /// <param name="gameId">Game id</param>
-        /// <returns>Updated SquadCheckIn entity</returns>
-        Task<SquadCheckIn> UpdateSquadCheckIn(SquadCheckIn SquadCheckIn, int gameId, int squadId);
+        
     }
 }

@@ -57,5 +57,24 @@ namespace HvZAPI.Controllers
                 });
             }
         }
+
+        /// <summary>
+        /// Deletes a SquadCheckIn entity
+        /// </summary>
+        /// <param name="id">Id of entity to delete</param>
+        /// <param name="gameId">Game that SquadCheckIn is in</param>
+        [HttpDelete]
+        public async Task<IActionResult> DeleteSquadCheckIn(int id, int gameId, int squadId)
+        {
+            try
+            {
+                await _squadCheckInService.DeleteSquadCheckIn(id, gameId, squadId);
+            }
+            catch (Exception error)
+            {
+                return NotFound(new ProblemDetails { Detail = error.Message });
+            }
+            return NoContent();
+        }
     }
 }
