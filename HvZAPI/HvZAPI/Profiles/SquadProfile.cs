@@ -17,6 +17,8 @@ namespace HvZAPI.Profiles
                 {
                     options.MapFrom(src => src.SquadCheckIns.Select(x => $"api/v1/game/{x.Squad.GameId}/squad/{x.SquadId}/checkin/{x.Id}"));
                 });
+
+            CreateMap<CreateSquadDTO, Squad>();
         }
     }
 }

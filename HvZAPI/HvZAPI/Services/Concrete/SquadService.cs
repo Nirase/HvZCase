@@ -13,9 +13,22 @@ namespace HvZAPI.Services.Concrete
             _context = context;
         }
 
-        public Task<Squad> CreateSquad(Squad Squad, int gameId)
+        public async Task<Squad> CreateSquad(Squad squad, int gameId, int creatorId)
         {
-            throw new NotImplementedException();
+            var creator = await _context.Players.FindAsync(creatorId);
+            if (creator is null)
+                throw new Exception("Player not found");
+            if (creator.SquadId != null)
+                throw new Exception("Player already in a squad");
+            var foundSquad = GetSquadByName(squad.Name, gameId);
+            if(foundSquad != null)
+                throw new Exception($"Squad with name {squad.Name} already exists");
+
+            await _context.Squads.AddAsync(squad);
+            await _context.SaveChangesAsync();
+            creator.SquadId = squad.Id;
+            await _context.SaveChangesAsync();
+            return squad;
         }
 
         public Task DeleteSquad(int id, int gameId)
@@ -23,14 +36,25 @@ namespace HvZAPI.Services.Concrete
             throw new NotImplementedException();
         }
 
-        public Task<Squad> GetSquadById(int id, int gameId)
+        public async Task<Squad> GetSquadById(int id, int gameId)
         {
-            throw new NotImplementedException();
+            var squad = await _context.Squads.Include(x => x.Players).Include(x => x.SquadCheckIns).Where(x => x.GameId == gameId).FirstOrDefaultAsync(x => x.Id == id);
+            if (squad is null)
+                throw new Exception("Squad not found");
+            return squad;
+        }
+
+        public async Task<Squad?> GetSquadByName(string name, int gameId)
+        {
+            var squad = await _context.Squads.Include(x => x.Players).Include(x => x.SquadCheckIns).Where(x => x.GameId == gameId).FirstOrDefaultAsync(x => x.Name == name);
+            if (squad != null)
+                throw new Exception($"Squad with name {squad.Name} already exists");
+            return squad;
         }
 
         public async Task<IEnumerable<Squad>> GetSquads(int gameId)
         {
-            return await _context.Squads.Include(x => x.Players).Where(x => x.GameId == gameId).ToListAsync();
+            return await _context.Squads.Include(x => x.Players).Include(x => x.SquadCheckIns).Where(x => x.GameId == gameId).ToListAsync();
         }
 
         public Task<Squad> UpdateSquad(Squad Squad, int gameId)

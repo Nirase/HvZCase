@@ -5,6 +5,8 @@ using HvZAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
+using HvZAPI.Services.Concrete;
+using HvZAPI.Models.DTOs.SquadDTOs;
 
 namespace HvZAPI.Controllers
 {
@@ -36,6 +38,28 @@ namespace HvZAPI.Controllers
         {
             return Ok(_mapper.Map<IEnumerable<SquadDTO>>(await _squadService.GetSquads(gameId)));
         }
-            
+
+        /// <summary>
+        /// Gets a squad based on id
+        /// </summary>
+        /// <param name="id">Id of squad entity</param>
+        /// <param name="gameId">Game id to search within</param>
+        /// <returns>Found squad</returns>
+        [HttpGet("{id}")]
+        public async Task<ActionResult<SquadDTO>> GetSquadById(int id, int gameId)
+        {
+            return Ok(_mapper.Map<SquadDTO>(await _squadService.GetSquadById(id, gameId)));
+        }
+
+
+        [HttpPost]
+        [ActionName(nameof(GetSquadById))]
+        public async Task<ActionResult<SquadDTO>> CreateSquad(int gameId, CreateSquadDTO createSquadDTO)
+        {
+            var creatorId = createSquadDTO.CreatorId;
+            var squad = _mapper.Map<Squad>(createSquadDTO);
+            var created = await _squadService.CreateSquad(squad, gameId, creatorId);
+            return CreatedAtAction(nameof(GetSquadById), new { id = created.Id }, _mapper.Map<SquadDTO>(created));
+        }
     }
 }

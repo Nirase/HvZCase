@@ -22,7 +22,7 @@ namespace HvZAPI.Services.Interfaces
         /// </summary>
         /// <param name="Squad">Squad to create</param>
         /// <returns>Created Squad entity</returns>
-        Task<Squad> CreateSquad(Squad Squad, int gameId);
+        Task<Squad> CreateSquad(Squad Squad, int gameId, int creator);
 
         /// <summary>
         /// Updates an existing Squad entity
