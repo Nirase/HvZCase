@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HvZAPI.Services.Concrete
 {
-    public class PlayerService: IPlayerService
+    public class PlayerService : IPlayerService
     {
         private readonly HvZDbContext _context;
         public PlayerService(HvZDbContext context)
@@ -24,12 +24,12 @@ namespace HvZAPI.Services.Concrete
             //player.GameId= gameId;
 
             var users = await _context.Users.FirstOrDefaultAsync(x => x.Id == player.UserId);
-            if(users is null)
+            if (users is null)
                 throw new Exception("User not found");
             var existingPlayers = await GetPlayers(gameId);
             foreach (var existingPlayer in existingPlayers)
             {
-                if(existingPlayer.UserId == player.UserId)
+                if (existingPlayer.UserId == player.UserId)
                 {
                     throw new Exception("Player already in game");
                 }
@@ -66,23 +66,18 @@ namespace HvZAPI.Services.Concrete
         public async Task<Player> UpdatePlayer(int gameId, Player player)
         {
             var foundPlayer = await GetPlayer(gameId, player.Id);
-            if (foundPlayer.IsHuman && !player.IsHuman)
+            if (player.IsHuman == true && foundPlayer.IsHuman == false)
             {
                 var kill = await _context.Kills.FirstOrDefaultAsync(x => x.VictimId == player.Id);
-                if (kill is null)
-                    throw new Exception("kill not found");
+                
 
                 var game = await _context.Games.Include(x => x.Kills).FirstOrDefaultAsync(x => x.Id == gameId);
-                if (game is null)
-                    throw new Exception("Game not found");
-
-                var victim = await _context.Players.FirstOrDefaultAsync(x => x.Id == kill.VictimId);
-
-                if (victim is null)
-                    throw new Exception("Victim is null");
-                game.Kills.Remove(kill);
-                foundPlayer.IsHuman = player.IsHuman;
+                if (kill != null)
+                {
+                    game.Kills.Remove(kill);
+                }
             }
+            foundPlayer.IsHuman = player.IsHuman;
             foundPlayer.IsPatientZero = player.IsPatientZero;
             await _context.SaveChangesAsync();
             return foundPlayer;
