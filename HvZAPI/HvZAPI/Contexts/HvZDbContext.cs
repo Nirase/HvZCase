@@ -10,7 +10,8 @@ namespace HvZAPI.Contexts
         public DbSet<Player> Players { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Mission> Missions { get; set; }
-
+        public DbSet<Squad> Squads { get; set; }
+        public DbSet<SquadCheckIn> SquadChecksIns { get; set; }
         public DbSet<Channel> Channels { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
 
@@ -36,7 +37,11 @@ namespace HvZAPI.Contexts
                 new Mission { Id = 3, Name = "Investigate!", Description = "A large noise was heard nearby, investigate the area to find out what caused it. Beware! The noise might have attracted zombies.", GameId = 1, StartDate = "2022-03-11", EndDate = "2022-03-12", VisibleToHumans = true, VisibleToZombies = true, Location = "Lågedammsgatan 23, 242 31 Hörby" }
                 );
             modelBuilder.Entity<Squad>().HasData(
-                new Squad { Id = 1, Name = "Cool cats" }
+                new Squad { Id = 1, Name = "Cool cats", GameId = 1 }
+                );
+            modelBuilder.Entity<SquadCheckIn>().HasData(
+                new SquadCheckIn { Id = 1, SquadId = 1, Location = "Ryttersgatan 14, 242 31 Hörby", StartDate = "2023-03-15", EndDate = "2024-01-01" },
+                new SquadCheckIn { Id = 2, SquadId = 1, Location = "Ryttersgatan 17, 242 31 Hörby", StartDate = "2023-02-15", EndDate = "2023-03-01" }
                 );
             modelBuilder.Entity<Player>().HasData(
                 new Player { Id = 1, GameId = 1, UserId = 1, IsHuman = false, IsPatientZero = true, BiteCode = "base", SquadId = 1},

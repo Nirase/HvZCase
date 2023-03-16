@@ -49,6 +49,10 @@ namespace HvZAPI.Services.Concrete
         {
             var foundGame = await GetGameById(game.Id);
             foundGame.GameState = game.GameState;
+            foundGame.StartDate = game.StartDate;
+            foundGame.EndDate = game.EndDate;
+            foundGame.Name = game.Name;
+            foundGame.Description = game.Description;
             await _context.SaveChangesAsync();
             return foundGame;
         }
