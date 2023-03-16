@@ -1,4 +1,5 @@
 ﻿using HvZAPI.Models;
+using HvZAPI.Models.DTOs.KillDTOs;
 
 namespace HvZAPI.Services.Interfaces
 {
@@ -21,11 +22,11 @@ namespace HvZAPI.Services.Interfaces
         /// <summary>
         /// Creates a new Kill entity
         /// </summary>
-        /// <param name="killerId">Id of killer</param>
+        /// <param name="kill">Kill to create</param>
         /// <param name="gameId">Id of game</param>
         /// <param name="biteCode">Supplied bitecode</param>
         /// <returns>Created Kill entity</returns>
-        Task<Kill> CreateKill(int killerId, int gameId, string biteCode);
+        Task<Kill> CreateKill(Kill kill, int gameId, string biteCode);
 
         /// <summary>
         /// Deletes an existing Kill entity
