@@ -17,6 +17,6 @@ namespace HvZAPI.Models
         ICollection<ChatMessage> SentMessages { get; set; }
 
         public int? SquadId { get; set; }
-        public Squad Squad { get; set; }
+        public Squad? Squad { get; set; }
     }
 }
