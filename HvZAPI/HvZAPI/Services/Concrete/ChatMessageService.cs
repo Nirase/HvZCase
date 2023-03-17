@@ -31,11 +31,13 @@ namespace HvZAPI.Services.Concrete
               "e346b81befca052d8721",
               "10876182a6c82c619b0b",
               options);
-
+            var sender = await _context.Players.Include(x => x.User).Where(x => x.Id == chatMessage.PlayerId).FirstOrDefaultAsync();
+            if (sender is null)
+                throw new Exception("Player not found");
             var result = await pusher.TriggerAsync(
               created.Channel.Name,
               "MessageRecieved",
-              new { message = created.Contents });
+              new { message = created.Contents, sender = sender.User.FirstName + " " + sender.User.LastName });
             return chatMessage;
         }
 
