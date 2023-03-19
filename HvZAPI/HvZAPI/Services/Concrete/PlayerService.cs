@@ -79,6 +79,7 @@ namespace HvZAPI.Services.Concrete
             }
             foundPlayer.IsHuman = player.IsHuman;
             foundPlayer.IsPatientZero = player.IsPatientZero;
+            foundPlayer.SquadId= player.SquadId;
             await _context.SaveChangesAsync();
             return foundPlayer;
         }
