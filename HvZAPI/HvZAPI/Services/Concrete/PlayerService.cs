@@ -1,6 +1,7 @@
 ﻿using HvZAPI.Contexts;
 using HvZAPI.Models;
 using HvZAPI.Services.Interfaces;
+using Microsoft.AspNetCore.Server.IIS.Core;
 using Microsoft.EntityFrameworkCore;
 
 namespace HvZAPI.Services.Concrete
@@ -79,7 +80,28 @@ namespace HvZAPI.Services.Concrete
             }
             foundPlayer.IsHuman = player.IsHuman;
             foundPlayer.IsPatientZero = player.IsPatientZero;
-            foundPlayer.SquadId= player.SquadId;
+            if (player.SquadId != null)
+            {
+                foundPlayer.SquadId = player.SquadId;
+                var squad = await _context.Squads.FirstOrDefaultAsync(x => x.Id == player.SquadId);
+                if(squad!= null)
+                {
+                    squad.Players.Add(player);
+                }
+                else
+                {
+                    throw new Exception("Squad not found");
+                }
+            }
+            else
+            {
+                var oldSquad = await _context.Squads.FirstOrDefaultAsync(x=> x.Id== foundPlayer.SquadId);
+                if(foundPlayer.SquadId != null)
+                {
+                    oldSquad.Players.Remove(foundPlayer);
+                }
+                foundPlayer.SquadId = player.SquadId;
+            }
             await _context.SaveChangesAsync();
             return foundPlayer;
         }
