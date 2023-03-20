@@ -15,7 +15,7 @@ namespace HvZAPI.Profiles
                 })
                 .ForMember(dto => dto.SquadCheckIns, options =>
                 {
-                    options.MapFrom(src => src.SquadCheckIns.Select(x => $"api/v1/game/{x.Squad.GameId}/squad/{x.SquadId}/checkin/{x.Id}"));
+                    options.MapFrom(src => src.SquadCheckIns.Select(x => $"api/v1/game/{x.Squad.GameId}/squad/{x.SquadId}/squadcheckin/{x.Id}"));
                 });
 
             CreateMap<CreateSquadDTO, Squad>();

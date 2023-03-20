@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Net.Mime;
+using System.Security.Claims;
 
 namespace HvZAPI.Controllers
 {
@@ -32,7 +33,8 @@ namespace HvZAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ChannelDTO>>> GetChannels(int gameId)
         {
-            return Ok(_mapper.Map<IEnumerable<ChannelDTO>>(await _channelService.GetChannels(gameId)));
+            var subject = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return Ok(_mapper.Map<IEnumerable<ChannelDTO>>(await _channelService.GetChannels(gameId, subject)));
         }
 
         /// <summary>
@@ -40,9 +42,11 @@ namespace HvZAPI.Controllers
         /// </summary>
         /// <returns>Detailed Channel entities</returns>
         [HttpGet("withdetails")]
-        public async Task<ActionResult<IEnumerable<ChannelDTO>>> GetChannelsDetailed(int gameId)
+        public async Task<ActionResult<IEnumerable<DetailedChannelDTO>>> GetChannelsDetailed(int gameId)
         {
-            return Ok(_mapper.Map<IEnumerable<ChannelDTO>>(await _channelService.GetChannels(gameId)));
+            var subject = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var dto = _mapper.Map<IEnumerable<DetailedChannelDTO>>(await _channelService.GetChannels(gameId, subject));
+            return Ok(_mapper.Map<IEnumerable<DetailedChannelDTO>>(await _channelService.GetChannels(gameId, subject)));
         }
         /// <summary>
         /// Fetches a Channel entity based on id

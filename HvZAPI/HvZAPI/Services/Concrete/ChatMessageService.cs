@@ -37,7 +37,7 @@ namespace HvZAPI.Services.Concrete
             var result = await pusher.TriggerAsync(
               created.Channel.Name,
               "MessageRecieved",
-              new { message = created.Contents, sender = sender.User.FirstName + " " + sender.User.LastName });
+              new { channel = created.Channel.Name, message = created.Contents, sender = sender.User.FirstName + " " + sender.User.LastName });
             return chatMessage;
         }
 

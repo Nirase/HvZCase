@@ -49,9 +49,19 @@ namespace HvZAPI.Services.Concrete
             return channel;
         }
 
-        public async Task<IEnumerable<Channel>> GetChannels(int gameId)
+        public async Task<IEnumerable<Channel>> GetChannels(int gameId, string subject)
         {
-            return await _context.Channels.Include(c => c.Messages).Where(c => c.GameId == gameId).ToListAsync();
+            var player = await _context.Players.Include(x => x.User).Include(x => x.Squad).Where(x => x.User.KeycloakId == subject).Where(x => x.GameId == gameId).FirstOrDefaultAsync();
+            
+            if(player is null)
+                throw new Exception("Player not found");
+
+            var squadName = "";
+            if(player.Squad != null)
+                squadName = player.Squad.Name;
+            if(player.IsHuman)
+                return await _context.Channels.Include(c => c.Messages).ThenInclude(x => x.Player).ThenInclude(x => x.User).Where(c => c.GameId == gameId).Where(x => x.Name == "Global" || x.Name == "Humans" || x.Name == squadName).ToListAsync();
+            return await _context.Channels.Include(c => c.Messages).ThenInclude(x => x.Player).ThenInclude(x => x.User).Where(c => c.GameId == gameId).Where(x => x.Name == "Global" || x.Name == "Zombies").ToListAsync();
         }
 
         public async Task<Channel> UpdateChannel(Channel channel, int gameId)

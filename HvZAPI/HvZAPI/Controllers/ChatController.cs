@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using HvZAPI.Models;
 using HvZAPI.Models.DTOs.ChatMessageDTOs;
-using HvZAPI.Models.DTOs.ChatMessageDTOs;
 using HvZAPI.Services.Concrete;
 using HvZAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -10,6 +9,7 @@ using PusherServer;
 using System.Data;
 using System.Net;
 using System.Net.Mime;
+using System.Security.Claims;
 using System.Threading.Channels;
 
 namespace HvZAPI.Controllers
@@ -37,10 +37,12 @@ namespace HvZAPI.Controllers
         /// <param name="gameId">Game to fetch from</param>
         /// <returns></returns>
         [HttpGet]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<IEnumerable<ChatMessageDTO>>> GetChatMessages(int gameId)
         {
             return Ok(_mapper.Map<IEnumerable<ChatMessageDTO>>(await _chatMessageService.GetChatMessages(gameId)));
         }
+
 
 
         /// <summary>
@@ -49,6 +51,7 @@ namespace HvZAPI.Controllers
         /// <param name="id">Entity id</param>
         /// <returns>Found ChatMessage entity</returns>
         [HttpGet("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<ChatMessageDTO>> GetChatMessageById(int id, int gameId)
         {
             try
@@ -71,6 +74,7 @@ namespace HvZAPI.Controllers
         /// <param name="chatMessageId">Id of entity to delete</param>
         /// <param name="gameId">Game that ChatMessage is in</param>
         [HttpDelete]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteChatMessage(int chatMessageId, int gameId)
         {
             try
@@ -93,6 +97,7 @@ namespace HvZAPI.Controllers
         /// <param name="gameId">Game id</param>
         /// <returns>Complete updated ChatMessage entity</returns>
         [HttpPut("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<ChatMessageDTO>> UpdateChatMessage(int id, UpdateChatMessageDTO updatedChatMessage, int gameId)
         {
             if (id != updatedChatMessage.Id)
@@ -109,8 +114,11 @@ namespace HvZAPI.Controllers
         /// <param name="gameId">Game id</param>
         /// <returns></returns>
         [HttpPost]
+        [Authorize(Roles = "user")]
         public async Task<ActionResult> CreateMessage(CreateChatMessageDTO message, int gameId)
         {
+            if (message.Contents.Length <= 0)
+                return BadRequest();
             var created = await _chatMessageService.CreateChatMessage(_mapper.Map<ChatMessage>(message), gameId);
             return CreatedAtAction(nameof(GetChatMessageById), new { id = created.Id }, message);
         }
