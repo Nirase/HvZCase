@@ -28,14 +28,14 @@ namespace HvZAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "user")]
+        //[Authorize(Roles = "user")]
         public async Task<ActionResult<IEnumerable<PlayerDTO>>> GetPlayers(int gameId)
         {
             return Ok(_mapper.Map<IEnumerable<PlayerDTO>>(await _playerService.GetPlayers(gameId)));
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "user")]
+        //[Authorize(Roles = "user")]
         public async Task<ActionResult<PlayerDTO>> GetPlayerById(int gameId, int id)
         {
             return Ok(_mapper.Map<PlayerDTO>(await _playerService.GetPlayer(gameId, id)));
@@ -43,7 +43,7 @@ namespace HvZAPI.Controllers
 
         [HttpPost]
         [ActionName(nameof(GetPlayerById))]
-        [Authorize(Roles = "user")]
+        //[Authorize(Roles = "user")]
         public async Task<ActionResult<PlayerDTO>> CreatePlayer(int gameId, CreatePlayerDTO createPlayerDTO)
         {
             var player = _mapper.Map<Player>(createPlayerDTO);
@@ -52,7 +52,7 @@ namespace HvZAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         public async Task<ActionResult<PlayerDTO>> UpdatePlayer(int gameId, UpdatePlayerDTO updatedPlayer)
         {
             var player = _mapper.Map<Player>(updatedPlayer);
@@ -61,7 +61,7 @@ namespace HvZAPI.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         public async Task<IActionResult> DeletePlayer(int gameId, int playerId)
         {
             try
