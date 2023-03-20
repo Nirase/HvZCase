@@ -1,6 +1,6 @@
 ﻿namespace HvZAPI.Models.DTOs.ChatMessageDTOs
 {
-    public class LightweightMessageDTOcs
+    public class LightweightMessageDTO
     {
         public string Url { get; set; }
         public string Id { get; set; }

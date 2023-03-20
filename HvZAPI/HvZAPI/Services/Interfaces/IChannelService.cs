@@ -8,7 +8,7 @@ namespace HvZAPI.Services.Interfaces
         /// Fetches all Channels
         /// </summary>
         /// <returns>Enumerable of Channels</returns>
-        Task<IEnumerable<Channel>> GetChannels(int gameId);
+        Task<IEnumerable<Channel>> GetChannels(int gameId, string subject);
 
         /// <summary>
         /// Fetches Channel based on id
