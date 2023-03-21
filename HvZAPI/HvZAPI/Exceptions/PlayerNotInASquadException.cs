@@ -3,6 +3,6 @@
     public class PlayerNotInASquadException :Exception 
     {
         public PlayerNotInASquadException() { }
-        public PlayerAlreadyInSquadException(string message):base(message) { }
+        public PlayerNotInASquadException(string message):base(message) { }
     }
 }
