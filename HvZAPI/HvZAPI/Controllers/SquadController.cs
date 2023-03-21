@@ -73,12 +73,12 @@ namespace HvZAPI.Controllers
         /// </summary>
         /// <param name="gameId">Game squad is in</param>
         /// <param name="squadId">Squad id</param>
-        /// <param name="joinLeaveSquad">Player id</param>
+        /// <param name="playerId">Player id</param>
         /// <returns></returns>
         [HttpPatch("{squadId}/join")]
-        public async Task<ActionResult<SquadDTO>> JoinSquad(int gameId, int squadId, JoinLeaveSquad joinLeaveSquad)
+        public async Task<ActionResult<SquadDTO>> JoinSquad(int gameId, int squadId, [FromBody] int playerId)
         {
-            var squad = await _squadService.JoinSquad(gameId, squadId, joinLeaveSquad.PlayerId);
+            var squad = await _squadService.JoinSquad(gameId, squadId, playerId);
             return Ok(_mapper.Map<SquadDTO>(squad));
         }
 
@@ -88,12 +88,12 @@ namespace HvZAPI.Controllers
         /// </summary>
         /// <param name="gameId">Game squad is in</param>
         /// <param name="squadId">Squad id</param>
-        /// <param name="joinLeaveSquad">Player id</param>
+        /// <param name="playerId">Player id</param>
         /// <returns></returns>
         [HttpPatch("{squadId}/leave")]
-        public async Task<ActionResult<SquadDTO>> LeaveSquad(int gameId, int squadId, JoinLeaveSquad joinLeaveSquad)
+        public async Task<ActionResult<SquadDTO>> LeaveSquad(int gameId, int squadId, [FromBody] int playerId)
         {
-            var squad = await _squadService.LeaveSquad(gameId, squadId, joinLeaveSquad.PlayerId);
+            var squad = await _squadService.LeaveSquad(gameId, squadId, playerId);
             return Ok(_mapper.Map<SquadDTO>(squad));
         }
 
