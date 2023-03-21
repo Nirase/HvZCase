@@ -57,6 +57,8 @@ namespace HvZAPI.Services.Concrete
             foundGame.EndDate = game.EndDate;
             foundGame.Name = game.Name;
             foundGame.Description = game.Description;
+            foundGame.Radius = game.Radius;
+            foundGame.Location = game.Location;
             await _context.SaveChangesAsync();
             return foundGame;
         }
