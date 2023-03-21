@@ -114,7 +114,7 @@ namespace HvZAPI.Services.Concrete
                 }
                 else
                 {
-                    throw new Exception("Squad not found");
+                    throw new SquadNotFoundException("Squad not found");
                 }
             }
             else
