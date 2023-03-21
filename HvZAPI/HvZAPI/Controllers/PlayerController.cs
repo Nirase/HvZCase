@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HvZAPI.Exceptions;
 using HvZAPI.Models;
 using HvZAPI.Models.DTOs.GameDTOs;
 using HvZAPI.Models.DTOs.PlayerDTOs;
@@ -38,7 +39,14 @@ namespace HvZAPI.Controllers
         //[Authorize(Roles = "user")]
         public async Task<ActionResult<PlayerDTO>> GetPlayerById(int gameId, int id)
         {
-            return Ok(_mapper.Map<PlayerDTO>(await _playerService.GetPlayer(gameId, id)));
+            try
+            {
+                return Ok(_mapper.Map<PlayerDTO>(await _playerService.GetPlayer(gameId, id)));
+            }
+            catch(PlayerNotFoundException ex)
+            {
+                return NotFound(new ProblemDetails { Detail = ex.Message });
+            }
         }
 
         [HttpPost]
@@ -47,8 +55,19 @@ namespace HvZAPI.Controllers
         public async Task<ActionResult<PlayerDTO>> CreatePlayer(int gameId, CreatePlayerDTO createPlayerDTO)
         {
             var player = _mapper.Map<Player>(createPlayerDTO);
-            await _playerService.AddPlayer(gameId, player);
-            return CreatedAtAction(nameof(GetPlayerById), new { id = player.Id }, _mapper.Map<PlayerDTO>(player));
+            try
+            {
+                await _playerService.AddPlayer(gameId, player);
+                return CreatedAtAction(nameof(GetPlayerById), new { id = player.Id }, _mapper.Map<PlayerDTO>(player));
+            }
+            catch(UserNotFoundException ex)
+            {
+                return NotFound(new ProblemDetails { Detail = ex.Message });
+            }
+            catch(PlayerAlreadyInGameException ex)
+            {
+                return BadRequest(new ProblemDetails { Detail = ex.Message});
+            }
         }
 
         [HttpPut("{id}")]
@@ -56,8 +75,19 @@ namespace HvZAPI.Controllers
         public async Task<ActionResult<PlayerDTO>> UpdatePlayer(int gameId, UpdatePlayerDTO updatedPlayer)
         {
             var player = _mapper.Map<Player>(updatedPlayer);
-            var result = await _playerService.UpdatePlayer(gameId, player);
-            return Ok(_mapper.Map<PlayerDTO>(result));
+            try
+            {
+                var result = await _playerService.UpdatePlayer(gameId, player);
+                return Ok(_mapper.Map<PlayerDTO>(result));
+            }
+            catch(PlayerNotFoundException ex)
+            {
+                return NotFound(new ProblemDetails { Detail=ex.Message});   
+            }
+            catch(SquadNotFoundException ex)
+            {
+                return NotFound(new ProblemDetails { Detail = ex.Message});
+            }
         }
 
         [HttpDelete]
@@ -68,7 +98,11 @@ namespace HvZAPI.Controllers
             {
                 await _playerService.DeletePlayer(gameId, playerId);
             }
-            catch (Exception error)
+            catch (PlayerNotFoundException error)
+            {
+                return NotFound(new ProblemDetails { Detail = error.Message });
+            }
+            catch (GameNotFoundException error)
             {
                 return NotFound(new ProblemDetails { Detail = error.Message });
             }

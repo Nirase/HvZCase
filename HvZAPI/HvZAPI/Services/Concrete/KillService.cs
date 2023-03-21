@@ -70,6 +70,8 @@ namespace HvZAPI.Services.Concrete
         public async Task<Kill> UpdateKill(Kill kill, int gameId)
         {
             var currentKill = await GetKillById(kill.Id, gameId);
+            if (currentKill is null)
+                throw new KillNotFoundException($"Kill {kill.Id} not found");
 
             if(kill.VictimId != currentKill.VictimId)
             {
