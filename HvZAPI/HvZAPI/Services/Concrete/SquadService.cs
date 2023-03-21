@@ -1,4 +1,5 @@
 ﻿using HvZAPI.Contexts;
+using HvZAPI.Exceptions;
 using HvZAPI.Models;
 using HvZAPI.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -17,12 +18,12 @@ namespace HvZAPI.Services.Concrete
         {
             var creator = await _context.Players.FindAsync(creatorId);
             if (creator is null)
-                throw new Exception("Player not found");
+                throw new PlayerNotFoundException("Player not found");
             if (creator.SquadId != null)
-                throw new Exception("Player already in a squad");
+                throw new PlayerAlreadyInSquadException("Player already in a squad");
             var foundSquad = await GetSquadByName(squad.Name, gameId);
             if(foundSquad != null)
-                throw new Exception($"Squad with name {squad.Name} already exists");
+                throw new SquadNameAlreadyInUseException($"Squad with name {squad.Name} already exists");
 
             await _context.Squads.AddAsync(squad);
             await _context.SaveChangesAsync();
@@ -35,7 +36,7 @@ namespace HvZAPI.Services.Concrete
         {
             var foundSquad = await GetSquadById(id, gameId);
             if (foundSquad == null)
-                throw new Exception("Squad not found");
+                throw new SquadNotFoundException("Squad not found");
             _context.Squads.Remove(foundSquad);
             await _context.SaveChangesAsync();
         }
@@ -65,13 +66,13 @@ namespace HvZAPI.Services.Concrete
         {
             var foundPlayer = await _context.Players.Include(x => x.Squad).FirstOrDefaultAsync(x=> x.Id == playerId);
             if (foundPlayer is null)
-                throw new Exception("Player not found");
+                throw new PlayerNotFoundException("Player not found");
             if (foundPlayer.Squad != null)
-                throw new Exception("Player is already in a squad");
+                throw new PlayerAlreadyInSquadException("Player is already in a squad");
             
             var foundSquad = await _context.Squads.Include(x => x.Players).FirstOrDefaultAsync(x => x.Id == squadId);
             if (foundSquad is null)
-                throw new Exception("Squad not found");
+                throw new SquadNotFoundException("Squad not found");
             
             foundPlayer.SquadId = squadId;
             foundSquad.Players.Add(foundPlayer);
@@ -83,14 +84,14 @@ namespace HvZAPI.Services.Concrete
         {
             var foundPlayer = await _context.Players.Include(x => x.Squad).FirstOrDefaultAsync(x => x.Id == playerId);
             if (foundPlayer is null)
-                throw new Exception("Player not found");
+                throw new PlayerNotFoundException("Player not found");
             if (foundPlayer.Squad is null)
-                throw new Exception("Player is not in a squad");
+                throw new PlayerNotInASquadException("Player is not in a squad");
             if (foundPlayer.Squad.Id != squadId)
-                throw new Exception("Player is trying to leave a squad they are not in");
+                throw new PlayerLeavingWrongSquadException("Player is trying to leave a squad they are not in");
             var foundSquad = await _context.Squads.Include(x => x.Players).FirstOrDefaultAsync(x => x.Id == squadId);
             if (foundSquad is null)
-                throw new Exception("Squad not found");
+                throw new SquadNotFoundException("Squad not found");
 
             foundPlayer.SquadId = null;
             foundSquad.Players.Remove(foundPlayer);
