@@ -109,7 +109,7 @@ namespace HvZAPI.Controllers
         /// <param name="id">Id of entity to update</param>
         /// <param name="updatedGame">Values to update with</param>
         /// <returns>Complete updated game entity</returns>
-        [HttpPut("{id}")]
+        [HttpPatch("{id}")]
         [Authorize(Roles = "admin")]
         public async Task<ActionResult<GameDTO>> UpdateGame(int id, UpdateGameDTO updatedGame)
         {
