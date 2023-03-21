@@ -76,7 +76,7 @@ namespace HvZAPI.Controllers
         /// <param name="playerId">Player id</param>
         /// <returns></returns>
         [HttpPatch("{squadId}/join")]
-        public async Task<ActionResult<SquadDTO>> JoinSquad(int gameId, int squadId, int playerId)
+        public async Task<ActionResult<SquadDTO>> JoinSquad(int gameId, int squadId, [FromBody] int playerId)
         {
             var squad = await _squadService.JoinSquad(gameId, squadId, playerId);
             return Ok(_mapper.Map<SquadDTO>(squad));
@@ -91,7 +91,7 @@ namespace HvZAPI.Controllers
         /// <param name="playerId">Player id</param>
         /// <returns></returns>
         [HttpPatch("{squadId}/leave")]
-        public async Task<ActionResult<SquadDTO>> LeaveSquad(int gameId, int squadId, int playerId)
+        public async Task<ActionResult<SquadDTO>> LeaveSquad(int gameId, int squadId, [FromBody] int playerId)
         {
             var squad = await _squadService.LeaveSquad(gameId, squadId, playerId);
             return Ok(_mapper.Map<SquadDTO>(squad));
