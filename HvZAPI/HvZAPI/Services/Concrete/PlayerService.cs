@@ -1,6 +1,7 @@
 ﻿using HvZAPI.Contexts;
 using HvZAPI.Models;
 using HvZAPI.Services.Interfaces;
+using Microsoft.AspNetCore.Server.IIS.Core;
 using Microsoft.EntityFrameworkCore;
 
 namespace HvZAPI.Services.Concrete
@@ -35,6 +36,7 @@ namespace HvZAPI.Services.Concrete
                 }
             }
             _context.Players.Add(player);
+            game.Players.Add(player);
             await _context.SaveChangesAsync();
             return player;
         }
@@ -66,10 +68,14 @@ namespace HvZAPI.Services.Concrete
         public async Task<Player> UpdatePlayer(int gameId, Player player)
         {
             var foundPlayer = await GetPlayer(gameId, player.Id);
+            if (foundPlayer == null)
+            {
+                throw new Exception("player doesn't exist");
+            }
             if (player.IsHuman == true && foundPlayer.IsHuman == false)
             {
                 var kill = await _context.Kills.FirstOrDefaultAsync(x => x.VictimId == player.Id);
-                
+
 
                 var game = await _context.Games.Include(x => x.Kills).FirstOrDefaultAsync(x => x.Id == gameId);
                 if (kill != null)
@@ -77,9 +83,52 @@ namespace HvZAPI.Services.Concrete
                     game.Kills.Remove(kill);
                 }
             }
-            foundPlayer.IsHuman = player.IsHuman;
-            foundPlayer.IsPatientZero = player.IsPatientZero;
-            foundPlayer.SquadId= player.SquadId;
+            if (player.SquadId != null)
+            {
+
+                var squad = await _context.Squads.Include(x => x.Players).FirstOrDefaultAsync(x => x.Id == player.SquadId);
+                if (squad != null)
+                {
+
+                    if (squad.Players.Contains(foundPlayer))
+                    {
+                        foundPlayer.IsHuman = player.IsHuman;
+                        foundPlayer.IsPatientZero = player.IsPatientZero;
+                    }
+                    else
+                    {
+                        var oldSquad = await _context.Squads.Include(x => x.Players).FirstOrDefaultAsync(x => x.Id == foundPlayer.SquadId);
+                        if (oldSquad != null)
+                        {
+                            oldSquad.Players.Remove(foundPlayer);
+                        }
+
+                        foundPlayer.IsHuman = player.IsHuman;
+                        foundPlayer.IsPatientZero = player.IsPatientZero;
+                        foundPlayer.SquadId = player.SquadId;
+                        squad.Players.Add(foundPlayer);
+                    }
+
+
+                }
+                else
+                {
+                    throw new Exception("Squad not found");
+                }
+            }
+            else
+            {
+                var oldSquad = await _context.Squads.FirstOrDefaultAsync(x => x.Id == foundPlayer.SquadId);
+                if (oldSquad != null)
+                {
+                    oldSquad.Players.Remove(foundPlayer);
+                }
+                
+                foundPlayer.SquadId = player.SquadId;
+                foundPlayer.IsHuman = player.IsHuman;
+                foundPlayer.IsPatientZero = player.IsPatientZero;
+            }
+
             await _context.SaveChangesAsync();
             return foundPlayer;
         }
