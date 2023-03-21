@@ -1,4 +1,5 @@
 ﻿using HvZAPI.Contexts;
+using HvZAPI.Exceptions;
 using HvZAPI.Models;
 using HvZAPI.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,9 @@ namespace HvZAPI.Services.Concrete
 
             
             var user = await GetUserById(UserId);
+            if(user is null)
+                throw new UserNotFoundException("User not found");
+
             foreach(var player in user.Players)
             {
                 var kills = await _context.Kills.Where(x => x.KillerId == player.Id || x.VictimId == player.Id).ToListAsync();
@@ -44,7 +48,7 @@ namespace HvZAPI.Services.Concrete
         {
             var user = await _context.Users.Include(x => x.Players).FirstOrDefaultAsync(x => x.Id == UserId);
             if (user is null)
-                throw new Exception("User not found");
+                throw new UserNotFoundException("User not found");
             return user;
         }
 
@@ -52,7 +56,7 @@ namespace HvZAPI.Services.Concrete
         {
             var user = await _context.Users.Include(x => x.Players).FirstOrDefaultAsync(x => x.KeycloakId == keycloakId);
             if (user is null)
-                throw new Exception("User not found");
+                throw new UserNotFoundException("User not found");
             return user;
         }
 
@@ -64,6 +68,8 @@ namespace HvZAPI.Services.Concrete
         public async Task<User> UpdateUser(User user)
         {
             var foundUser = await GetUserById(user.Id);
+            if (foundUser is null)
+                throw new UserNotFoundException("User not found");
             foundUser.FirstName = user.FirstName;
             foundUser.LastName = user.LastName;
             _context.Entry(foundUser).State = EntityState.Modified;
