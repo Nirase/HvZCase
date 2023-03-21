@@ -31,6 +31,14 @@ namespace HvZAPI.Profiles
                 .ForMember(dto => dto.Game, options =>
                 {
                     options.MapFrom(src => $"api/v1/game/{src.GameId}");
+                })
+                .ForMember(dto => dto.FirstName, options =>
+                {
+                    options.MapFrom(src => src.User.FirstName);
+                })
+                .ForMember(dto => dto.LastName, options =>
+                {
+                    options.MapFrom(src => src.User.LastName);
                 });
 
             CreateMap<CreatePlayerDTO, Player>();

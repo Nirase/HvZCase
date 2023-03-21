@@ -56,7 +56,7 @@ namespace HvZAPI.Services.Concrete
 
         public async Task<Player> GetPlayer(int gameId, int playerId)
         {
-            var player = await _context.Players.FirstOrDefaultAsync(x => x.Id == playerId && x.GameId == gameId);
+            var player = await _context.Players.Include(x => x.User).FirstOrDefaultAsync(x => x.Id == playerId && x.GameId == gameId);
             if (player is null)
                 throw new PlayerNotFoundException("Player Not Found");
             return player;
