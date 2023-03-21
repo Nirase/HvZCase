@@ -1,4 +1,5 @@
 ﻿using HvZAPI.Contexts;
+using HvZAPI.Exceptions;
 using HvZAPI.Models;
 using HvZAPI.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -17,13 +18,13 @@ namespace HvZAPI.Services.Concrete
         {
             var victim = await _context.Players.Where(x => x.GameId == gameId).FirstOrDefaultAsync(p => p.BiteCode== biteCode);
             if (victim is null)
-                throw new Exception("Victim not found");
+                throw new PlayerNotFoundException($"Victim with bite code {biteCode} not found");
 
             var killer = await _context.Players.FirstOrDefaultAsync(p => p.Id == kill.KillerId);
             if (killer is null)
-                throw new Exception("Killer not found");
+                throw new PlayerNotFoundException($"Killer {kill.KillerId} not found");
             if (killer.IsHuman || !victim.IsHuman)
-                throw new Exception("Invalid kill");
+                throw new InvalidKillException($"Invalid kill, killer is alive or victim is already dead: Killer is alive: {killer.IsHuman}, Victim is alive: {victim.IsHuman}");
 
             var killToMake = new Kill { GameId = gameId, TimeOfDeath = kill.TimeOfDeath, KillerId = kill.KillerId, VictimId = victim.Id, Description = kill.Description, Location = kill.Location };
             victim.IsHuman = false;
@@ -36,17 +37,17 @@ namespace HvZAPI.Services.Concrete
         {
             var kill = await GetKillById(killId, gameId);
             if (kill is null)
-                throw new Exception("Kill not found");
+                throw new KillNotFoundException($"Kill {killId} not found");
 
             var game = await _context.Games.Include(x => x.Kills).FirstOrDefaultAsync(x => x.Id == gameId);
 
             if (game is null)
-                throw new Exception("Game not found");
+                throw new GameNotFoundException($"Game {gameId} not found");
 
             var victim = await _context.Players.FirstOrDefaultAsync(x => x.Id == kill.VictimId);
 
             if (victim is null)
-                throw new Exception("Victim is null");
+                throw new PlayerNotFoundException($"Victim {kill.VictimId} not found");
 
             victim.IsHuman = true;
             game.Kills.Remove(kill);
@@ -57,7 +58,7 @@ namespace HvZAPI.Services.Concrete
         {
             var kill = await _context.Kills.Include(x => x.Victim).Include(x => x.Killer).Where(x => x.GameId == gameId).FirstOrDefaultAsync(x => x.Id == id);
             if (kill is null)
-                throw new Exception("Kill Not Found");
+                throw new KillNotFoundException("Kill Not Found");
             return kill;
         }
 
