@@ -97,11 +97,11 @@ namespace HvZAPI.Controllers
         /// <returns>Fully created game entity</returns>
         [HttpPost]
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult<Game>> CreateGame(CreateGameDTO createGameDTO)
+        public async Task<ActionResult<GameDTO>> CreateGame(CreateGameDTO createGameDTO)
         {
             var game = _mapper.Map<Game>(createGameDTO);
             await _gameService.CreateGame(game);
-            return CreatedAtAction(nameof(GetGameById), new { id = game.Id }, game);
+            return CreatedAtAction(nameof(GetGameById), new { id = game.Id }, _mapper.Map<GameDTO>(game));
         }
 
         /// <summary>
