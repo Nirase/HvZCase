@@ -61,6 +61,43 @@ namespace HvZAPI.Services.Concrete
             return await _context.Squads.Include(x => x.Players).Include(x => x.SquadCheckIns).Where(x => x.GameId == gameId).ToListAsync();
         }
 
+        public async Task<Squad> JoinSquad(int gameId, int squadId, int playerId)
+        {
+            var foundPlayer = await _context.Players.Include(x => x.Squad).FirstOrDefaultAsync(x=> x.Id == playerId);
+            if (foundPlayer is null)
+                throw new Exception("Player not found");
+            if (foundPlayer.Squad != null)
+                throw new Exception("Player is already in a squad");
+            
+            var foundSquad = await _context.Squads.Include(x => x.Players).FirstOrDefaultAsync(x => x.Id == squadId);
+            if (foundSquad is null)
+                throw new Exception("Squad not found");
+            
+            foundPlayer.SquadId = squadId;
+            foundSquad.Players.Add(foundPlayer);
+            await _context.SaveChangesAsync();
+            return foundSquad;
+        }
+
+        public async Task<Squad> LeaveSquad(int gameId, int squadId, int playerId)
+        {
+            var foundPlayer = await _context.Players.Include(x => x.Squad).FirstOrDefaultAsync(x => x.Id == playerId);
+            if (foundPlayer is null)
+                throw new Exception("Player not found");
+            if (foundPlayer.Squad is null)
+                throw new Exception("Player is not in a squad");
+            if (foundPlayer.Squad.Id != squadId)
+                throw new Exception("Player is trying to leave a squad they are not in");
+            var foundSquad = await _context.Squads.Include(x => x.Players).FirstOrDefaultAsync(x => x.Id == squadId);
+            if (foundSquad is null)
+                throw new Exception("Squad not found");
+
+            foundPlayer.SquadId = null;
+            foundSquad.Players.Remove(foundPlayer);
+            await _context.SaveChangesAsync();
+            return foundSquad;
+        }
+
         public async Task<Squad> UpdateSquad(Squad Squad, int gameId)
         {
             var foundGame = await GetSquadById(Squad.Id, gameId);
