@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HvZAPI.Exceptions;
 using HvZAPI.Models;
 using HvZAPI.Models.DTOs.ChatMessageDTOs;
 using HvZAPI.Services.Concrete;
@@ -43,8 +44,6 @@ namespace HvZAPI.Controllers
             return Ok(_mapper.Map<IEnumerable<ChatMessageDTO>>(await _chatMessageService.GetChatMessages(gameId)));
         }
 
-
-
         /// <summary>
         /// Fetches a ChatMessage entity based on id
         /// </summary>
@@ -58,7 +57,7 @@ namespace HvZAPI.Controllers
             {
                 return Ok(_mapper.Map<ChatMessageDTO>(await _chatMessageService.GetChatMessageById(id, gameId)));
             }
-            catch (Exception ex)
+            catch (ChatMessageNotFoundException ex)
             {
                 return NotFound(new ProblemDetails
                 {
@@ -81,30 +80,11 @@ namespace HvZAPI.Controllers
             {
                 await _chatMessageService.DeleteChatMessage(chatMessageId, gameId);
             }
-            catch (Exception error)
+            catch (ChatMessageNotFoundException error)
             {
                 return NotFound(new ProblemDetails { Detail = error.Message });
             }
             return NoContent();
-        }
-
-
-        /// <summary>
-        /// Updates a ChatMessage entity
-        /// </summary>
-        /// <param name="id">Id of entity to update</param>
-        /// <param name="updatedChatMessage">Values to update with</param>
-        /// <param name="gameId">Game id</param>
-        /// <returns>Complete updated ChatMessage entity</returns>
-        [HttpPut("{id}")]
-        [Authorize(Roles = "admin")]
-        public async Task<ActionResult<ChatMessageDTO>> UpdateChatMessage(int id, UpdateChatMessageDTO updatedChatMessage, int gameId)
-        {
-            if (id != updatedChatMessage.Id)
-                return BadRequest();
-            var ChatMessage = _mapper.Map<ChatMessage>(updatedChatMessage);
-            var result = await _chatMessageService.UpdateChatMessage(ChatMessage, gameId);
-            return Ok(_mapper.Map<ChatMessageDTO>(result));
         }
 
         /// <summary>
@@ -119,8 +99,15 @@ namespace HvZAPI.Controllers
         {
             if (message.Contents.Length <= 0)
                 return BadRequest();
-            var created = await _chatMessageService.CreateChatMessage(_mapper.Map<ChatMessage>(message), gameId);
-            return CreatedAtAction(nameof(GetChatMessageById), new { id = created.Id }, message);
+            try
+            {
+                var created = await _chatMessageService.CreateChatMessage(_mapper.Map<ChatMessage>(message), gameId);
+                return CreatedAtAction(nameof(GetChatMessageById), new { id = created.Id }, message);
+            }
+            catch(PlayerNotFoundException ex)
+            {
+                return NotFound(new ProblemDetails { Detail = ex.Message });
+            }
         }
     }
 }

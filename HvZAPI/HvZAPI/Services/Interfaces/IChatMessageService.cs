@@ -30,16 +30,9 @@ namespace HvZAPI.Services.Interfaces
         /// <summary>
         /// Deletes an existing ChatMessage entity
         /// </summary>
-        /// <param name="ChatMessageId">ChatMessage entity to delete</param>
+        /// <param name="chatMessageId">ChatMessage entity to delete</param>
         /// <param name="gameId">Game entity to delete from</param>
         Task DeleteChatMessage(int chatMessageId, int gameId);
 
-        /// <summary>
-        /// Updates a ChatMessage entity
-        /// </summary>
-        /// <param name="ChatMessage">Updated ChatMessage entity</param>
-        /// <param name="gameId">Game id</param>
-        /// <returns>Updated ChatMessage entity</returns>
-        Task<ChatMessage> UpdateChatMessage(ChatMessage chatMessage, int gameId);
     }
 }
