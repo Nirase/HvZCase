@@ -1,4 +1,5 @@
 ﻿using HvZAPI.Contexts;
+using HvZAPI.Exceptions;
 using HvZAPI.Models;
 using HvZAPI.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +19,7 @@ namespace HvZAPI.Services.Concrete
         {
             var channel = await _context.Channels.Where(c => c.GameId == gameId).FirstOrDefaultAsync(x => x.Name == channelToCreate.Name);
             if (channel != null)
-                throw new Exception($"Channel with name {channel.Name} already exists");
+                throw new ChannelAlreadyExistsException($"Channel with name {channel.Name} already exists");
             _context.Channels.Add(channelToCreate);
             await _context.SaveChangesAsync();
             return channelToCreate;
@@ -28,7 +29,7 @@ namespace HvZAPI.Services.Concrete
         {
             var channel = await GetChannelById(channelId, gameId);
             if (channel is null)
-                throw new Exception("Channel not found");
+                throw new ChannelNotFoundException("Channel not found");
             _context.Channels.Remove(channel);
             await _context.SaveChangesAsync();
         }
@@ -37,7 +38,7 @@ namespace HvZAPI.Services.Concrete
         {
             var channel = await _context.Channels.Include(c => c.Messages).Where(c => c.GameId == gameId).FirstOrDefaultAsync(x => x.Id == id);
             if (channel is null)
-                throw new Exception("Channel not found");
+                throw new ChannelNotFoundException("Channel not found");
             return channel;
         }
 
@@ -45,7 +46,7 @@ namespace HvZAPI.Services.Concrete
         {
             var channel = await _context.Channels.Include(c => c.Messages).Where(c => c.GameId == gameId).FirstOrDefaultAsync(x => x.Name == name);
             if (channel is null)
-                throw new Exception("Channel not found");
+                throw new ChannelNotFoundException("Channel not found");
             return channel;
         }
 
@@ -54,7 +55,7 @@ namespace HvZAPI.Services.Concrete
             var player = await _context.Players.Include(x => x.User).Include(x => x.Squad).Where(x => x.User.KeycloakId == subject).Where(x => x.GameId == gameId).FirstOrDefaultAsync();
             
             if(player is null)
-                throw new Exception("Player not found");
+                throw new PlayerNotFoundException("Player not found");
 
             var squadName = "";
             if(player.Squad != null)
