@@ -37,5 +37,21 @@ namespace HvZAPI.Services.Interfaces
         /// <param name="id">Id of Squad entity</param>
         /// <returns></returns>
         Task DeleteSquad(int id, int gameId);
+        /// <summary>
+        /// Joins an existing squad
+        /// </summary>
+        /// <param name="gameId">Game id</param>
+        /// <param name="squadId">Squad id</param>
+        /// <param name="playerId">Player id joining</param>
+        /// <returns>Updated squad with player in it</returns>
+        Task<Squad> JoinSquad(int gameId, int squadId, int playerId);
+        /// <summary>
+        /// Leaves an existing squad
+        /// </summary>
+        /// <param name="gameId">Game id</param>
+        /// <param name="squadId">Squad id</param>
+        /// <param name="playerId">Player id joining</param>
+        /// <returns>Updated squad without player in it</returns>
+        Task<Squad> LeaveSquad(int gameId, int squadId, int playerId);
     }
 }

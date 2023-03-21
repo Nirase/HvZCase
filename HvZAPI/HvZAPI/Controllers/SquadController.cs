@@ -51,6 +51,12 @@ namespace HvZAPI.Controllers
         }
 
 
+        /// <summary>
+        /// Creates a new squad entity
+        /// </summary>
+        /// <param name="gameId">Game to create squad in</param>
+        /// <param name="createSquadDTO">Squad to create</param>
+        /// <returns></returns>
         [HttpPost]
         [ActionName(nameof(GetSquadById))]
         public async Task<ActionResult<SquadDTO>> CreateSquad(int gameId, CreateSquadDTO createSquadDTO)
@@ -59,6 +65,36 @@ namespace HvZAPI.Controllers
             var squad = _mapper.Map<Squad>(createSquadDTO);
             var created = await _squadService.CreateSquad(squad, gameId, creatorId);
             return CreatedAtAction(nameof(GetSquadById), new { id = created.Id }, _mapper.Map<SquadDTO>(created));
+        }
+
+
+        /// <summary>
+        /// Makes a player join an existing squad.
+        /// </summary>
+        /// <param name="gameId">Game squad is in</param>
+        /// <param name="squadId">Squad id</param>
+        /// <param name="playerId">Player id</param>
+        /// <returns></returns>
+        [HttpPatch("{squadId}/join")]
+        public async Task<ActionResult<SquadDTO>> JoinSquad(int gameId, int squadId, int playerId)
+        {
+            var squad = await _squadService.JoinSquad(gameId, squadId, playerId);
+            return Ok(_mapper.Map<SquadDTO>(squad));
+        }
+
+
+        /// <summary>
+        /// Makes a player leave the squad
+        /// </summary>
+        /// <param name="gameId">Game squad is in</param>
+        /// <param name="squadId">Squad id</param>
+        /// <param name="playerId">Player id</param>
+        /// <returns></returns>
+        [HttpPatch("{squadId}/leave")]
+        public async Task<ActionResult<SquadDTO>> LeaveSquad(int gameId, int squadId, int playerId)
+        {
+            var squad = await _squadService.LeaveSquad(gameId, squadId, playerId);
+            return Ok(_mapper.Map<SquadDTO>(squad));
         }
 
 
