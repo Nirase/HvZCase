@@ -18,6 +18,13 @@ namespace HvZAPI.Services.Concrete
         {
             _context.Games.Add(game);
             await _context.SaveChangesAsync();
+            var global = new Channel { GameId = game.Id, Name = "Global" };
+            var humans = new Channel { GameId = game.Id, Name = "Humans" };
+            var zombies = new Channel { GameId = game.Id, Name = "Zombies" };
+            _context.Channels.Add(global);
+            _context.Channels.Add(humans);
+            _context.Channels.Add(zombies);
+            await _context.SaveChangesAsync();
             return game;
         }
 
