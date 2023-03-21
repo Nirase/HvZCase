@@ -1,4 +1,5 @@
 ﻿using HvZAPI.Contexts;
+using HvZAPI.Exceptions;
 using HvZAPI.Models;
 using HvZAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Server.IIS.Core;
@@ -18,7 +19,7 @@ namespace HvZAPI.Services.Concrete
         {
             var game = await _context.Games.FirstOrDefaultAsync(x => x.Id == gameId);
             if (game is null)
-                throw new Exception("Game not found");
+                throw new GameNotFoundException("Game not found");
 
             //player.IsHuman = true;
             //player.IsPatientZero = false;
@@ -26,14 +27,12 @@ namespace HvZAPI.Services.Concrete
 
             var users = await _context.Users.FirstOrDefaultAsync(x => x.Id == player.UserId);
             if (users is null)
-                throw new Exception("User not found");
+                throw new UserNotFoundException($"User {player.UserId} not found");
             var existingPlayers = await GetPlayers(gameId);
             foreach (var existingPlayer in existingPlayers)
             {
                 if (existingPlayer.UserId == player.UserId)
-                {
-                    throw new Exception("Player already in game");
-                }
+                    throw new PlayerAlreadyInGameException("Player already in game");
             }
             _context.Players.Add(player);
             game.Players.Add(player);
@@ -45,9 +44,12 @@ namespace HvZAPI.Services.Concrete
         {
             var player = await GetPlayer(gameId, playerId);
 
+            if (player is null)
+                throw new PlayerNotFoundException("Player not found");
             var game = await _context.Games.FirstOrDefaultAsync(x => x.Id == gameId);
+
             if (game is null)
-                throw new Exception("Game not found");
+                throw new GameNotFoundException("Game not found");
             _context.Players.Remove(player);
             await _context.SaveChangesAsync();
         }
@@ -56,7 +58,7 @@ namespace HvZAPI.Services.Concrete
         {
             var player = await _context.Players.FirstOrDefaultAsync(x => x.Id == playerId && x.GameId == gameId);
             if (player is null)
-                throw new Exception("Player Not Found");
+                throw new PlayerNotFoundException("Player Not Found");
             return player;
         }
 
@@ -69,9 +71,8 @@ namespace HvZAPI.Services.Concrete
         {
             var foundPlayer = await GetPlayer(gameId, player.Id);
             if (foundPlayer == null)
-            {
-                throw new Exception("player doesn't exist");
-            }
+                throw new PlayerNotFoundException("Player not found");
+            
             if (player.IsHuman == true && foundPlayer.IsHuman == false)
             {
                 var kill = await _context.Kills.FirstOrDefaultAsync(x => x.VictimId == player.Id);
@@ -113,7 +114,7 @@ namespace HvZAPI.Services.Concrete
                 }
                 else
                 {
-                    throw new Exception("Squad not found");
+                    throw new SquadNotFoundException("Squad not found");
                 }
             }
             else

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Net.Mime;
 using HvZAPI.Services.Concrete;
+using HvZAPI.Exceptions;
 
 namespace HvZAPI.Controllers
 {
@@ -61,7 +62,7 @@ namespace HvZAPI.Controllers
             {
                 return Ok(_mapper.Map<UserDTO>(await _userService.GetUserById(id)));
             }
-            catch (Exception ex)
+            catch (UserNotFoundException ex)
             {
                 return NotFound(new ProblemDetails
                 {
@@ -83,7 +84,7 @@ namespace HvZAPI.Controllers
             {
                 return Ok(_mapper.Map<DetailedUserDTO>(await _userService.GetUserById(id)));
             }
-            catch (Exception ex)
+            catch (UserNotFoundException ex)
             {
                 return NotFound(new ProblemDetails
                 {
@@ -105,7 +106,7 @@ namespace HvZAPI.Controllers
             {
                 return Ok(_mapper.Map<UserDTO>(await _userService.GetUserByKeycloakId(id)));
             }
-            catch (Exception ex)
+            catch (UserNotFoundException ex)
             {
                 return NotFound(new ProblemDetails
                 {
@@ -140,7 +141,7 @@ namespace HvZAPI.Controllers
             {
                 await _userService.DeleteUser(id);
             }
-            catch (Exception error)
+            catch (UserNotFoundException error)
             {
                 return NotFound(new ProblemDetails { Detail = error.Message });
             }

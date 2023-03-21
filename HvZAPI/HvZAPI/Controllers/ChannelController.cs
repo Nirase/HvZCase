@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Net.Mime;
 using System.Security.Claims;
+using HvZAPI.Exceptions;
 
 namespace HvZAPI.Controllers
 {
@@ -33,25 +34,40 @@ namespace HvZAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ChannelDTO>>> GetChannels(int gameId)
         {
+
             var subject = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            return Ok(_mapper.Map<IEnumerable<ChannelDTO>>(await _channelService.GetChannels(gameId, subject)));
+            try
+            {
+                return Ok(_mapper.Map<IEnumerable<ChannelDTO>>(await _channelService.GetChannels(gameId, subject)));
+            }
+            catch(PlayerNotFoundException ex)
+            {
+                return NotFound(new ProblemDetails { Detail = ex.Message });
+            }
         }
 
         /// <summary>
-        /// Fetches all Channel entities with details
+        /// Fetches all Channel entities that a player has access to with details
         /// </summary>
         /// <returns>Detailed Channel entities</returns>
         [HttpGet("withdetails")]
         public async Task<ActionResult<IEnumerable<DetailedChannelDTO>>> GetChannelsDetailed(int gameId)
         {
             var subject = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var dto = _mapper.Map<IEnumerable<DetailedChannelDTO>>(await _channelService.GetChannels(gameId, subject));
-            return Ok(_mapper.Map<IEnumerable<DetailedChannelDTO>>(await _channelService.GetChannels(gameId, subject)));
+            try
+            {
+                return Ok(_mapper.Map<IEnumerable<DetailedChannelDTO>>(await _channelService.GetChannels(gameId, subject)));
+            }
+            catch (PlayerNotFoundException ex)
+            {
+                return NotFound(new ProblemDetails { Detail = ex.Message });
+            }
         }
         /// <summary>
         /// Fetches a Channel entity based on id
         /// </summary>
         /// <param name="id">Entity id</param>
+        /// <param name="gameId">Game id</param>
         /// <returns>Found Channel entity</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<ChannelDTO>> GetChannelById(int id, int gameId)
@@ -60,7 +76,7 @@ namespace HvZAPI.Controllers
             {
                 return Ok(_mapper.Map<ChannelDTO>(await _channelService.GetChannelById(id, gameId)));
             }
-            catch (Exception ex)
+            catch (ChannelNotFoundException ex)
             {
                 return NotFound(new ProblemDetails
                 {
@@ -73,6 +89,7 @@ namespace HvZAPI.Controllers
         /// Fetches a Channel entity with details based on id
         /// </summary>
         /// <param name="id">Entity id</param>
+        /// <param name="gameId">Game id</param>
         /// <returns>Found Channel entity</returns>
         [HttpGet("{id}/withdetails")]
         public async Task<ActionResult<DetailedChannelDTO>> GetChannelWithDetailsById(int id, int gameId)
@@ -81,7 +98,7 @@ namespace HvZAPI.Controllers
             {
                 return Ok(_mapper.Map<DetailedChannelDTO>(await _channelService.GetChannelById(id, gameId)));
             }
-            catch (Exception ex)
+            catch (ChannelNotFoundException ex)
             {
                 return NotFound(new ProblemDetails
                 {
@@ -99,8 +116,15 @@ namespace HvZAPI.Controllers
         public async Task<ActionResult<Channel>> CreateChannel(ChannelDTO channelDto)
         {
             var channel = _mapper.Map<Channel>(channelDto);
-            await _channelService.CreateChannel(channel, channelDto.GameId);
-            return CreatedAtAction(nameof(GetChannelById), new { id = channel.Id }, channel);
+            try
+            {
+                await _channelService.CreateChannel(channel, channelDto.GameId);
+                return CreatedAtAction(nameof(GetChannelById), new { id = channel.Id }, channel);
+            }
+            catch(ChannelAlreadyExistsException ex)
+            {
+                return BadRequest(new ProblemDetails { Detail= ex.Message });
+            }
         }
 
         /// <summary>
@@ -130,7 +154,7 @@ namespace HvZAPI.Controllers
             {
                 await _channelService.DeleteChannel(id, gameId);
             }
-            catch (Exception error)
+            catch (ChannelNotFoundException error)
             {
                 return NotFound(new ProblemDetails { Detail = error.Message });
             }

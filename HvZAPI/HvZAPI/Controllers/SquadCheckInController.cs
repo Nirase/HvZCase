@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HvZAPI.Exceptions;
 using HvZAPI.Models;
 using HvZAPI.Models.DTOs.SquadCheckInDTOs;
 using HvZAPI.Models.DTOs.SquadDTOs;
@@ -50,7 +51,7 @@ namespace HvZAPI.Controllers
             {
                 return Ok(_mapper.Map<SquadCheckInDTO>(await _squadCheckInService.GetSquadCheckInById(id, gameId, squadId)));
             }
-            catch (Exception ex)
+            catch (SquadCheckInNotFoundException ex)
             {
                 return NotFound(new ProblemDetails
                 {
@@ -80,7 +81,7 @@ namespace HvZAPI.Controllers
             {
                 await _squadCheckInService.DeleteSquadCheckIn(id, gameId, squadId);
             }
-            catch (Exception error)
+            catch (SquadCheckInNotFoundException error)
             {
                 return NotFound(new ProblemDetails { Detail = error.Message });
             }

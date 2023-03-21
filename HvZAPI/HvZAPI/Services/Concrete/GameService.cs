@@ -1,4 +1,5 @@
 ﻿using HvZAPI.Contexts;
+using HvZAPI.Exceptions;
 using HvZAPI.Models;
 using HvZAPI.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,9 @@ namespace HvZAPI.Services.Concrete
         {
             var game = await GetGameById(id);
             
+            if(game is null)
+                throw new GameNotFoundException($"Game {id} not found");
+
             foreach(var kill in game.Kills) 
                 _context.Kills.Remove(kill);
             
@@ -36,7 +40,7 @@ namespace HvZAPI.Services.Concrete
         {
             var game = await _context.Games.Include(x => x.Players).ThenInclude(x => x.User).Include(x => x.Kills).Include(x => x.Missions).FirstOrDefaultAsync(x => x.Id == id);
             if (game is null)
-                throw new Exception("Game Not Found");
+                throw new GameNotFoundException($"Game {id} Not Found");
             return game;
         }
 

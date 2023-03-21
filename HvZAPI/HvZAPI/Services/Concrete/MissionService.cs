@@ -1,4 +1,5 @@
 ﻿using HvZAPI.Contexts;
+using HvZAPI.Exceptions;
 using HvZAPI.Models;
 using HvZAPI.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +24,7 @@ namespace HvZAPI.Services.Concrete
         {
             var mission = await GetMissionById(missionId, gameId);
             if (mission is null)
-                throw new Exception("Mission not found");
+                throw new MissionNotFoundException($"Mission {missionId} not found");
             _context.Missions.Remove(mission);
             await _context.SaveChangesAsync();
         }
@@ -32,7 +33,7 @@ namespace HvZAPI.Services.Concrete
         {
             var mission = await _context.Missions.Include(x => x.Game).Where(x => x.GameId == gameId).FirstOrDefaultAsync(x => x.Id == id);
             if (mission is null)
-                throw new Exception("Mission not found");
+                throw new MissionNotFoundException("Mission not found");
             return mission;
         }
 

@@ -1,4 +1,5 @@
 ﻿using HvZAPI.Contexts;
+using HvZAPI.Exceptions;
 using HvZAPI.Models;
 using HvZAPI.Models.DTOs.ChatMessageDTOs;
 using HvZAPI.Services.Interfaces;
@@ -33,7 +34,7 @@ namespace HvZAPI.Services.Concrete
               options);
             var sender = await _context.Players.Include(x => x.User).Where(x => x.Id == chatMessage.PlayerId).FirstOrDefaultAsync();
             if (sender is null)
-                throw new Exception("Player not found");
+                throw new PlayerNotFoundException($"Player {chatMessage.PlayerId} not found");
             var result = await pusher.TriggerAsync(
               created.Channel.Name,
               "MessageRecieved",
@@ -52,43 +53,13 @@ namespace HvZAPI.Services.Concrete
         {
             var message = await _context.ChatMessages.Include(x => x.Player).Include(x => x.Channel).FirstOrDefaultAsync(x => x.Id == id);
             if (message is null)
-                throw new Exception("Message not found");
+                throw new ChatMessageNotFoundException($"Message {id} not found");
             return message;
         }
 
         public async Task<IEnumerable<ChatMessage>> GetChatMessages(int gameId)
         {
             return await _context.ChatMessages.Include(x => x.Player).Include(x => x.Channel).Where(x => x.Channel.GameId == gameId).ToListAsync();
-        }
-
-        public async Task<ChatMessage> UpdateChatMessage(ChatMessage chatMessage, int gameId)
-        {
-            var message = await GetChatMessageById(chatMessage.Id, gameId);
-            message.PlayerId = chatMessage.PlayerId;
-            message.ChannelId = chatMessage.ChannelId;
-            message.Contents= chatMessage.Contents;
-            _context.Entry(message).State = EntityState.Modified;
-
-            await _context.SaveChangesAsync();
-
-            var options = new PusherOptions
-            {
-                Cluster = "eu",
-                Encrypted = true
-            };
-
-            var pusher = new Pusher(
-              "1567386",
-              "e346b81befca052d8721",
-              "10876182a6c82c619b0b",
-              options);
-
-            var result = await pusher.TriggerAsync(
-              message.Channel.Name,
-              "MessageUpdated",
-              new { message = message.Contents });
-
-            return message;
         }
     }
 }

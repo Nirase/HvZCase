@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HvZAPI.Exceptions;
 using HvZAPI.Models;
 using HvZAPI.Models.DTOs.GameDTOs;
 using HvZAPI.Services.Interfaces;
@@ -58,7 +59,7 @@ namespace HvZAPI.Controllers
             {
                 return Ok(_mapper.Map<GameDTO>(await _gameService.GetGameById(id)));
             }
-            catch(Exception ex)
+            catch(GameNotFoundException ex)
             {
                 return NotFound(new ProblemDetails
                 {
@@ -80,7 +81,7 @@ namespace HvZAPI.Controllers
             {
                 return Ok(_mapper.Map<DetailedGameDTO>(await _gameService.GetGameById(id)));
             }
-            catch (Exception ex)
+            catch (GameNotFoundException ex)
             {
                 return NotFound(new ProblemDetails
                 {
@@ -133,7 +134,7 @@ namespace HvZAPI.Controllers
             {
                 await _gameService.DeleteGame(id);
             }
-            catch(Exception error)
+            catch(GameNotFoundException error)
             {
                 return NotFound(new ProblemDetails { Detail= error.Message });
             }

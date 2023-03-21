@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HvZAPI.Exceptions;
 using HvZAPI.Models;
 using HvZAPI.Models.DTOs.MissionDTOs;
 using HvZAPI.Services.Interfaces;
@@ -50,7 +51,7 @@ namespace HvZAPI.Controllers
             {
                 return Ok(_mapper.Map<MissionDTO>(await _missionService.GetMissionById(id, gameId)));
             }
-            catch (Exception ex)
+            catch (MissionNotFoundException ex)
             {
                 return NotFound(new ProblemDetails
                 {
@@ -72,7 +73,7 @@ namespace HvZAPI.Controllers
             {
                 await _missionService.DeleteMission(id, gameId);
             }
-            catch (Exception error)
+            catch (MissionNotFoundException error)
             {
                 return NotFound(new ProblemDetails { Detail = error.Message });
             }

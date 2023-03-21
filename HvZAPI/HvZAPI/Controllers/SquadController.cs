@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using HvZAPI.Services.Concrete;
+using HvZAPI.Exceptions;
 
 namespace HvZAPI.Controllers
 {
@@ -47,7 +48,14 @@ namespace HvZAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<SquadDTO>> GetSquadById(int id, int gameId)
         {
-            return Ok(_mapper.Map<SquadDTO>(await _squadService.GetSquadById(id, gameId)));
+            try
+            {
+                return Ok(_mapper.Map<SquadDTO>(await _squadService.GetSquadById(id, gameId)));
+            }
+            catch(SquadNotFoundException ex)
+            {
+                return NotFound(new ProblemDetails { Detail = ex.Message });
+            }
         }
 
 
@@ -63,8 +71,24 @@ namespace HvZAPI.Controllers
         {
             var creatorId = createSquadDTO.CreatorId;
             var squad = _mapper.Map<Squad>(createSquadDTO);
-            var created = await _squadService.CreateSquad(squad, gameId, creatorId);
-            return CreatedAtAction(nameof(GetSquadById), new { id = created.Id }, _mapper.Map<SquadDTO>(created));
+            try
+            {
+                var created = await _squadService.CreateSquad(squad, gameId, creatorId);
+                return CreatedAtAction(nameof(GetSquadById), new { id = created.Id }, _mapper.Map<SquadDTO>(created));
+            }
+            catch(PlayerNotFoundException ex)
+            {
+                return NotFound(new ProblemDetails { Detail = ex.Message });
+            }
+            catch (PlayerAlreadyInSquadException ex)
+            {
+                return BadRequest(new ProblemDetails { Detail = ex.Message });
+            }
+            catch (SquadNameAlreadyInUseException ex)
+            {
+                return BadRequest(new ProblemDetails { Detail = ex.Message });
+            }
+
         }
 
 
@@ -78,8 +102,24 @@ namespace HvZAPI.Controllers
         [HttpPatch("{squadId}/join")]
         public async Task<ActionResult<SquadDTO>> JoinSquad(int gameId, int squadId, [FromBody] int playerId)
         {
-            var squad = await _squadService.JoinSquad(gameId, squadId, playerId);
-            return Ok(_mapper.Map<SquadDTO>(squad));
+            try
+            {
+                var squad = await _squadService.JoinSquad(gameId, squadId, playerId);
+                return Ok(_mapper.Map<SquadDTO>(squad));
+            }
+
+            catch (PlayerNotFoundException ex)
+            {
+                return NotFound(new ProblemDetails { Detail = ex.Message });
+            }
+            catch (PlayerAlreadyInSquadException ex)
+            {
+                return BadRequest(new ProblemDetails { Detail = ex.Message });
+            }
+            catch (SquadNameAlreadyInUseException ex)
+            {
+                return BadRequest(new ProblemDetails { Detail = ex.Message });
+            }
         }
 
 
@@ -93,8 +133,29 @@ namespace HvZAPI.Controllers
         [HttpPatch("{squadId}/leave")]
         public async Task<ActionResult<SquadDTO>> LeaveSquad(int gameId, int squadId, [FromBody] int playerId)
         {
-            var squad = await _squadService.LeaveSquad(gameId, squadId, playerId);
-            return Ok(_mapper.Map<SquadDTO>(squad));
+            try
+            {
+                var squad = await _squadService.LeaveSquad(gameId, squadId, playerId);
+                return Ok(_mapper.Map<SquadDTO>(squad));
+
+            }
+            catch(PlayerLeavingWrongSquadException ex)
+            {
+                return BadRequest(new ProblemDetails { Detail = ex.Message });
+
+            }
+            catch (PlayerNotFoundException ex)
+            {
+                return NotFound(new ProblemDetails { Detail = ex.Message });
+            }
+            catch (PlayerNotInASquadException ex)
+            {
+                return BadRequest(new ProblemDetails { Detail = ex.Message });
+            }
+            catch (SquadNameAlreadyInUseException ex)
+            {
+                return BadRequest(new ProblemDetails { Detail = ex.Message });
+            }
         }
 
 
@@ -110,7 +171,7 @@ namespace HvZAPI.Controllers
             {
                 await _squadService.DeleteSquad(id, gameId);
             }
-            catch (Exception error)
+            catch (SquadNotFoundException error)
             {
                 return NotFound(new ProblemDetails { Detail = error.Message });
             }

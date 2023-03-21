@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HvZAPI.Exceptions;
 using HvZAPI.Models;
 using HvZAPI.Models.DTOs.GameDTOs;
 using HvZAPI.Models.DTOs.KillDTOs;
@@ -51,7 +52,7 @@ namespace HvZAPI.Controllers
             {
                 return Ok(_mapper.Map<Kill>(await _killService.GetKillById(id, gameId)));
             }
-            catch (Exception ex)
+            catch (KillNotFoundException ex)
             {
                 return NotFound(new ProblemDetails
                 {
@@ -73,8 +74,19 @@ namespace HvZAPI.Controllers
         public async Task<ActionResult<Kill>> CreateKill(CreateKillDTO kill, int gameId)
         {
             var dto = _mapper.Map<Kill>(kill);
-            var created = await _killService.CreateKill(dto, gameId, kill.BiteCode);
-            return CreatedAtAction(nameof(GetKillById), new { id = created.Id }, kill);
+            try
+            {
+                var created = await _killService.CreateKill(dto, gameId, kill.BiteCode);
+                return CreatedAtAction(nameof(GetKillById), new { id = created.Id }, kill);
+            }
+            catch(PlayerNotFoundException ex)
+            {
+                return NotFound(new ProblemDetails { Detail = ex.Message });
+            }
+            catch(InvalidKillException ex)
+            {
+                return BadRequest(new ProblemDetails { Detail=ex.Message });
+            }
         }
 
 
@@ -91,9 +103,17 @@ namespace HvZAPI.Controllers
             {
                 await _killService.DeleteKill(killId, gameId);
             }
-            catch (Exception error)
+            catch (KillNotFoundException error)
             {
                 return NotFound(new ProblemDetails { Detail = error.Message });
+            }
+            catch(GameNotFoundException ex)
+            {
+                return NotFound(new ProblemDetails { Detail = ex.Message });
+            }
+            catch(PlayerNotFoundException ex)
+            {
+                return NotFound(new ProblemDetails { Detail = ex.Message});
             }
             return NoContent();
         }
@@ -112,8 +132,15 @@ namespace HvZAPI.Controllers
             if (id != updatedKill.Id)
                 return BadRequest();
             var kill = _mapper.Map<Kill>(updatedKill);
-            var result = await _killService.UpdateKill(kill, gameId);
-            return Ok(result);
+            try
+            {
+                var result = await _killService.UpdateKill(kill, gameId);
+                return Ok(result);
+            }
+            catch(KillNotFoundException ex)
+            {
+                return NotFound(new ProblemDetails { Detail=ex.Message});   
+            }
         }
     }
 }
