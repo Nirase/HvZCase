@@ -20,7 +20,7 @@ namespace HvZAPI.Services.Concrete
             if (victim is null)
                 throw new PlayerNotFoundException($"Victim with bite code {biteCode} not found");
 
-            var killer = await _context.Players.FirstOrDefaultAsync(p => p.Id == kill.KillerId);
+            var killer = await _context.Players.Where(x => x.GameId == gameId).FirstOrDefaultAsync(p => p.Id == kill.KillerId);
             if (killer is null)
                 throw new PlayerNotFoundException($"Killer {kill.KillerId} not found");
             if (killer.IsHuman || !victim.IsHuman)
