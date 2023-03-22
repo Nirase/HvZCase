@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using HvZAPI.Services.Concrete;
 using HvZAPI.Exceptions;
+using System.Security.Claims;
 
 namespace HvZAPI.Controllers
 {
@@ -72,11 +73,13 @@ namespace HvZAPI.Controllers
         [Authorize(Roles = "user")]
         public async Task<ActionResult<SquadDTO>> CreateSquad(int gameId, CreateSquadDTO createSquadDTO)
         {
+            var subject = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            
             var creatorId = createSquadDTO.CreatorId;
             var squad = _mapper.Map<Squad>(createSquadDTO);
             try
             {
-                var created = await _squadService.CreateSquad(squad, gameId, creatorId);
+                var created = await _squadService.CreateSquad(squad, gameId, creatorId, subject);
                 return CreatedAtAction(nameof(GetSquadById), new { id = created.Id }, _mapper.Map<SquadDTO>(created));
             }
             catch(PlayerNotFoundException ex)
@@ -91,7 +94,10 @@ namespace HvZAPI.Controllers
             {
                 return BadRequest(new ProblemDetails { Detail = ex.Message });
             }
-
+            catch (SubjectDoesNotMatchException ex)
+            {
+                return BadRequest(new ProblemDetails { Detail = ex.Message });
+            }
         }
 
 
@@ -106,9 +112,11 @@ namespace HvZAPI.Controllers
         [Authorize(Roles = "user")]
         public async Task<ActionResult<SquadDTO>> JoinSquad(int gameId, int squadId, [FromBody] int playerId)
         {
+            var subject = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             try
             {
-                var squad = await _squadService.JoinSquad(gameId, squadId, playerId);
+                var squad = await _squadService.JoinSquad(gameId, squadId, playerId, subject);
                 return Ok(_mapper.Map<SquadDTO>(squad));
             }
 
@@ -121,6 +129,10 @@ namespace HvZAPI.Controllers
                 return BadRequest(new ProblemDetails { Detail = ex.Message });
             }
             catch (SquadNameAlreadyInUseException ex)
+            {
+                return BadRequest(new ProblemDetails { Detail = ex.Message });
+            }
+            catch (SubjectDoesNotMatchException ex)
             {
                 return BadRequest(new ProblemDetails { Detail = ex.Message });
             }
@@ -138,11 +150,12 @@ namespace HvZAPI.Controllers
         [Authorize(Roles = "user")]
         public async Task<ActionResult<SquadDTO>> LeaveSquad(int gameId, int squadId, [FromBody] int playerId)
         {
+            var subject = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             try
             {
-                var squad = await _squadService.LeaveSquad(gameId, squadId, playerId);
+                var squad = await _squadService.LeaveSquad(gameId, squadId, playerId, subject);
                 return Ok(_mapper.Map<SquadDTO>(squad));
-
             }
             catch(PlayerLeavingWrongSquadException ex)
             {
@@ -158,6 +171,10 @@ namespace HvZAPI.Controllers
                 return BadRequest(new ProblemDetails { Detail = ex.Message });
             }
             catch (SquadNameAlreadyInUseException ex)
+            {
+                return BadRequest(new ProblemDetails { Detail = ex.Message });
+            }
+            catch(SubjectDoesNotMatchException ex)
             {
                 return BadRequest(new ProblemDetails { Detail = ex.Message });
             }

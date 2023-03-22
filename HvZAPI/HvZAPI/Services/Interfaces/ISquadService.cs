@@ -22,7 +22,7 @@ namespace HvZAPI.Services.Interfaces
         /// </summary>
         /// <param name="Squad">Squad to create</param>
         /// <returns>Created Squad entity</returns>
-        Task<Squad> CreateSquad(Squad Squad, int gameId, int creator);
+        Task<Squad> CreateSquad(Squad Squad, int gameId, int creator, string subject);
 
         /// <summary>
         /// Updates an existing Squad entity
@@ -44,7 +44,7 @@ namespace HvZAPI.Services.Interfaces
         /// <param name="squadId">Squad id</param>
         /// <param name="playerId">Player id joining</param>
         /// <returns>Updated squad with player in it</returns>
-        Task<Squad> JoinSquad(int gameId, int squadId, int playerId);
+        Task<Squad> JoinSquad(int gameId, int squadId, int playerId, string subject);
         /// <summary>
         /// Leaves an existing squad
         /// </summary>
@@ -52,6 +52,6 @@ namespace HvZAPI.Services.Interfaces
         /// <param name="squadId">Squad id</param>
         /// <param name="playerId">Player id joining</param>
         /// <returns>Updated squad without player in it</returns>
-        Task<Squad> LeaveSquad(int gameId, int squadId, int playerId);
+        Task<Squad> LeaveSquad(int gameId, int squadId, int playerId, string subject);
     }
 }

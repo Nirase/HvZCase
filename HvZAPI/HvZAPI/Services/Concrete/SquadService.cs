@@ -14,11 +14,18 @@ namespace HvZAPI.Services.Concrete
             _context = context;
         }
 
-        public async Task<Squad> CreateSquad(Squad squad, int gameId, int creatorId)
+        public async Task<Squad> CreateSquad(Squad squad, int gameId, int creatorId, string subject)
         {
+            var subjectPlayer = await _context.Users.Include(x => x.Players).Where(x => x.KeycloakId == subject).FirstOrDefaultAsync();
+            if (subjectPlayer is null)
+                throw new PlayerNotFoundException("Player not found by subject");
+
             var creator = await _context.Players.FindAsync(creatorId);
             if (creator is null)
                 throw new PlayerNotFoundException("Player not found");
+
+            if (creator.Id != subjectPlayer.Id)
+                throw new SubjectDoesNotMatchException("Subject does not match found player");
             if (creator.SquadId != null)
                 throw new PlayerAlreadyInSquadException("Player already in a squad");
             var foundSquad = await GetSquadByName(squad.Name, gameId);
@@ -62,11 +69,20 @@ namespace HvZAPI.Services.Concrete
             return await _context.Squads.Include(x => x.Players).Include(x => x.SquadCheckIns).Where(x => x.GameId == gameId).ToListAsync();
         }
 
-        public async Task<Squad> JoinSquad(int gameId, int squadId, int playerId)
+        public async Task<Squad> JoinSquad(int gameId, int squadId, int playerId, string subject)
         {
+            var subjectPlayer = await _context.Users.Include(x => x.Players).Where(x => x.KeycloakId == subject).FirstOrDefaultAsync();
+            if (subjectPlayer is null)
+                throw new PlayerNotFoundException("Player not found by subject");
+
+
             var foundPlayer = await _context.Players.Include(x => x.Squad).FirstOrDefaultAsync(x=> x.Id == playerId);
             if (foundPlayer is null)
                 throw new PlayerNotFoundException("Player not found");
+            if (foundPlayer.Id != subjectPlayer.Id)
+                throw new SubjectDoesNotMatchException("Subject does not match found player");
+
+
             if (foundPlayer.Squad != null)
                 throw new PlayerAlreadyInSquadException("Player is already in a squad");
             
@@ -80,11 +96,20 @@ namespace HvZAPI.Services.Concrete
             return foundSquad;
         }
 
-        public async Task<Squad> LeaveSquad(int gameId, int squadId, int playerId)
+        public async Task<Squad> LeaveSquad(int gameId, int squadId, int playerId, string subject)
         {
+            var subjectPlayer = await _context.Users.Include(x => x.Players).Where(x => x.KeycloakId == subject).FirstOrDefaultAsync();
+            if (subjectPlayer is null)
+                throw new PlayerNotFoundException("Player not found by subject");
+
+
             var foundPlayer = await _context.Players.Include(x => x.Squad).FirstOrDefaultAsync(x => x.Id == playerId);
             if (foundPlayer is null)
                 throw new PlayerNotFoundException("Player not found");
+
+            if (foundPlayer.Id != subjectPlayer.Id)
+                throw new SubjectDoesNotMatchException("Subject does not match found player");
+
             if (foundPlayer.Squad is null)
                 throw new PlayerNotInASquadException("Player is not in a squad");
             if (foundPlayer.Squad.Id != squadId)
