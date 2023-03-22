@@ -1,4 +1,5 @@
 ﻿using HvZAPI.Models;
+using System.Security.Claims;
 
 namespace HvZAPI.Services.Interfaces
 {
@@ -11,7 +12,7 @@ namespace HvZAPI.Services.Interfaces
         /// <param name="subject">Subject issuing the request</param>
         /// <param name="roles">Roles of the issuer</param>
         /// <returns>Enumerable of Missions</returns>
-        Task<IEnumerable<Mission>> GetMissions(int gameId, string subject, List<string> roles);
+        Task<IEnumerable<Mission>> GetMissions(int gameId, string subject, List<Claim> roles);
 
         /// <summary>
         /// Fetches Mission based on id
@@ -21,7 +22,7 @@ namespace HvZAPI.Services.Interfaces
         /// <param name="subject">Subject issuing the request</param>
         /// <param name="roles">Roles of the issuer</param>
         /// <returns>Found Mission entity</returns>
-        Task<Mission> GetMissionById(int id, int gameId, string subject, List<string> roles);
+        Task<Mission> GetMissionById(int id, int gameId, string subject, List<Claim> roles);
 
         /// <summary>
         /// Creates a new Mission entity

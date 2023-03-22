@@ -3,6 +3,7 @@ using HvZAPI.Exceptions;
 using HvZAPI.Models;
 using HvZAPI.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace HvZAPI.Services.Concrete
 {
@@ -31,9 +32,9 @@ namespace HvZAPI.Services.Concrete
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Mission> GetMissionById(int id, int gameId, string subject, List<string> roles)
+        public async Task<Mission> GetMissionById(int id, int gameId, string subject, List<Claim> roles)
         {
-            if(roles.Contains("admin"))
+            if (roles.Where(x => x.Value == "admin") != null)
             {
                 var adminMission = await _context.Missions.Include(x => x.Game).Where(x => x.GameId == gameId).FirstOrDefaultAsync(x => x.Id == id);
                 if (adminMission is null)
@@ -54,9 +55,9 @@ namespace HvZAPI.Services.Concrete
             throw new MissionNotVisibleException("This mission is not visible to the subject");
         }
 
-        public async Task<IEnumerable<Mission>> GetMissions(int gameId, string subject, List<string> roles)
+        public async Task<IEnumerable<Mission>> GetMissions(int gameId, string subject, List<Claim> roles)
         {
-            if (roles.Contains("admin"))
+            if (roles.Where(x => x.Value == "admin") != null)
                 return await _context.Missions.Include(x => x.Game).Where(x => x.GameId == gameId).ToListAsync();
 
             var player = await _context.Players.Include(x => x.User).Where(x => x.User.KeycloakId == subject).FirstOrDefaultAsync();
