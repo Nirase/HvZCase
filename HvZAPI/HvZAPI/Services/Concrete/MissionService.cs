@@ -15,9 +15,11 @@ namespace HvZAPI.Services.Concrete
             _context = context;
         }
 
-        public Task<Mission> CreateMission(int MissionerId, int gameId, string biteCode)
+        public async Task<Mission> CreateMission(Mission mission)
         {
-            throw new NotImplementedException();
+            _context.Missions.Add(mission);
+            await _context.SaveChangesAsync();
+            return mission;
         }
 
         public async Task DeleteMission(int missionId, int gameId)

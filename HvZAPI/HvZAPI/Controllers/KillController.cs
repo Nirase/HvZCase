@@ -3,6 +3,7 @@ using HvZAPI.Exceptions;
 using HvZAPI.Models;
 using HvZAPI.Models.DTOs.GameDTOs;
 using HvZAPI.Models.DTOs.KillDTOs;
+using HvZAPI.Models.DTOs.PlayerDTOs;
 using HvZAPI.Services.Concrete;
 using HvZAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
