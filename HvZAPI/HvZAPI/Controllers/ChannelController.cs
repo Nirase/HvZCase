@@ -4,7 +4,6 @@ using HvZAPI.Models;
 using HvZAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
 using System.Net.Mime;
 using System.Security.Claims;
 using HvZAPI.Exceptions;
@@ -28,10 +27,11 @@ namespace HvZAPI.Controllers
         }
 
         /// <summary>
-        /// Fetches all Channels
+        /// Fetches all Channels that the user has access to
         /// </summary>
         /// <returns>Enumerable of all Channels</returns>
         [HttpGet]
+        [Authorize(Roles = "user")]
         public async Task<ActionResult<IEnumerable<ChannelDTO>>> GetChannels(int gameId)
         {
 
@@ -51,6 +51,7 @@ namespace HvZAPI.Controllers
         /// </summary>
         /// <returns>Detailed Channel entities</returns>
         [HttpGet("withdetails")]
+        [Authorize(Roles = "user")]
         public async Task<ActionResult<IEnumerable<DetailedChannelDTO>>> GetChannelsDetailed(int gameId)
         {
             var subject = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -70,6 +71,7 @@ namespace HvZAPI.Controllers
         /// <param name="gameId">Game id</param>
         /// <returns>Found Channel entity</returns>
         [HttpGet("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<ChannelDTO>> GetChannelById(int id, int gameId)
         {
             try
@@ -92,6 +94,7 @@ namespace HvZAPI.Controllers
         /// <param name="gameId">Game id</param>
         /// <returns>Found Channel entity</returns>
         [HttpGet("{id}/withdetails")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<DetailedChannelDTO>> GetChannelWithDetailsById(int id, int gameId)
         {
             try
@@ -113,6 +116,7 @@ namespace HvZAPI.Controllers
         /// <param name="channelDto">Channel entity to create</param>
         /// <returns>Fully created Channel entity</returns>
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<Channel>> CreateChannel(ChannelDTO channelDto)
         {
             var channel = _mapper.Map<Channel>(channelDto);
@@ -132,8 +136,10 @@ namespace HvZAPI.Controllers
         /// </summary>
         /// <param name="id">Id of entity to update</param>
         /// <param name="updatedChannel">Values to update with</param>
+        /// <param name="gameId">Game id</param>
         /// <returns>Complete updated Channel entity</returns>
         [HttpPut("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<ChannelDTO>> UpdateChannel(int id, Channel updatedChannel, int gameId)
         {
             if (id != updatedChannel.Id)
@@ -146,8 +152,10 @@ namespace HvZAPI.Controllers
         /// Deletes an existing Channel entity and all players and kills included in it 
         /// </summary>
         /// <param name="id">Id of entity to delete</param>
+        /// <param name="gameId">Game id</param>
         /// <returns>NoContent or NotFound</returns>
         [HttpDelete]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteChannel(int id, int gameId)
         {
             try

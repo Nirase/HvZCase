@@ -17,6 +17,9 @@ namespace HvZAPI.Services.Concrete
 
         public async Task<User> AddUser(User user)
         {
+            var foundUser = await _context.Users.FirstOrDefaultAsync(x => x.KeycloakId == user.KeycloakId);
+            if (foundUser != null)
+                throw new UserAlreadyExistsException($"User with keycloak sub {foundUser.KeycloakId} already exists");
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
             return user;

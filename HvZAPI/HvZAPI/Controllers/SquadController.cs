@@ -34,6 +34,7 @@ namespace HvZAPI.Controllers
         /// <param name="gameId">Game id</param>
         /// <returns>Found squads</returns>
         [HttpGet]
+        [Authorize(Roles = "user")]
         public async Task<ActionResult<IEnumerable<SquadDTO>>> GetSquads(int gameId)
         {
             return Ok(_mapper.Map<IEnumerable<SquadDTO>>(await _squadService.GetSquads(gameId)));
@@ -46,6 +47,7 @@ namespace HvZAPI.Controllers
         /// <param name="gameId">Game id to search within</param>
         /// <returns>Found squad</returns>
         [HttpGet("{id}")]
+        [Authorize(Roles = "user")]
         public async Task<ActionResult<SquadDTO>> GetSquadById(int id, int gameId)
         {
             try
@@ -67,6 +69,7 @@ namespace HvZAPI.Controllers
         /// <returns></returns>
         [HttpPost]
         [ActionName(nameof(GetSquadById))]
+        [Authorize(Roles = "user")]
         public async Task<ActionResult<SquadDTO>> CreateSquad(int gameId, CreateSquadDTO createSquadDTO)
         {
             var creatorId = createSquadDTO.CreatorId;
@@ -100,6 +103,7 @@ namespace HvZAPI.Controllers
         /// <param name="playerId">Player id</param>
         /// <returns></returns>
         [HttpPatch("{squadId}/join")]
+        [Authorize(Roles = "user")]
         public async Task<ActionResult<SquadDTO>> JoinSquad(int gameId, int squadId, [FromBody] int playerId)
         {
             try
@@ -131,6 +135,7 @@ namespace HvZAPI.Controllers
         /// <param name="playerId">Player id</param>
         /// <returns></returns>
         [HttpPatch("{squadId}/leave")]
+        [Authorize(Roles = "user")]
         public async Task<ActionResult<SquadDTO>> LeaveSquad(int gameId, int squadId, [FromBody] int playerId)
         {
             try
@@ -165,6 +170,7 @@ namespace HvZAPI.Controllers
         /// <param name="id">Id of entity to delete</param>
         /// <param name="gameId">Game to delete from</param>
         [HttpDelete]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteSquad(int id, int gameId)
         {
             try
@@ -186,6 +192,7 @@ namespace HvZAPI.Controllers
         /// <param name="gameId">Game id</param>
         /// <returns>Complete updated Squad entity</returns>
         [HttpPut("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<SquadDTO>> UpdateSquad(int id, UpdateSquadDTO updatedSquad, int gameId)
         {
             if (id != updatedSquad.Id)

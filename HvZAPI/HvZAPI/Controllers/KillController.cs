@@ -44,6 +44,7 @@ namespace HvZAPI.Controllers
         /// Fetches a Kill entity based on id
         /// </summary>
         /// <param name="id">Entity id</param>
+        /// <param name="gameId">Game id</param>
         /// <returns>Found Kill entity</returns>
         [HttpGet("{id}")]
         [Authorize(Roles = "user")]
