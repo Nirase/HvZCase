@@ -9,8 +9,9 @@ namespace HvZAPI.Services.Interfaces
         /// </summary>
         /// <param name="gameId">Game id</param>
         /// <param name="subject">Subject issuing the request</param>
+        /// <param name="roles">Roles of the issuer</param>
         /// <returns>Enumerable of Missions</returns>
-        Task<IEnumerable<Mission>> GetMissions(int gameId, string subject);
+        Task<IEnumerable<Mission>> GetMissions(int gameId, string subject, List<string> roles);
 
         /// <summary>
         /// Fetches Mission based on id
@@ -18,8 +19,9 @@ namespace HvZAPI.Services.Interfaces
         /// <param name="id">Mission Id to find</param>
         /// <param name="gameId">Game id</param>
         /// <param name="subject">Subject issuing the request</param>
+        /// <param name="roles">Roles of the issuer</param>
         /// <returns>Found Mission entity</returns>
-        Task<Mission> GetMissionById(int id, int gameId, string subject);
+        Task<Mission> GetMissionById(int id, int gameId, string subject, List<string> roles);
 
         /// <summary>
         /// Creates a new Mission entity

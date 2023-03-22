@@ -31,8 +31,15 @@ namespace HvZAPI.Services.Concrete
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Mission> GetMissionById(int id, int gameId, string subject)
+        public async Task<Mission> GetMissionById(int id, int gameId, string subject, List<string> roles)
         {
+            if(roles.Contains("admin"))
+            {
+                var adminMission = await _context.Missions.Include(x => x.Game).Where(x => x.GameId == gameId).FirstOrDefaultAsync(x => x.Id == id);
+                if (adminMission is null)
+                    throw new MissionNotFoundException("Mission not found");
+                return adminMission;
+            }
             var player = await _context.Players.Include(x => x.User).Where(x => x.User.KeycloakId == subject).FirstOrDefaultAsync();
             if (player is null)
                 throw new PlayerNotFoundException("Player not found");
@@ -47,8 +54,11 @@ namespace HvZAPI.Services.Concrete
             throw new MissionNotVisibleException("This mission is not visible to the subject");
         }
 
-        public async Task<IEnumerable<Mission>> GetMissions(int gameId, string subject)
+        public async Task<IEnumerable<Mission>> GetMissions(int gameId, string subject, List<string> roles)
         {
+            if (roles.Contains("admin"))
+                return await _context.Missions.Include(x => x.Game).Where(x => x.GameId == gameId).ToListAsync();
+
             var player = await _context.Players.Include(x => x.User).Where(x => x.User.KeycloakId == subject).FirstOrDefaultAsync();
             if (player is null)
                 throw new PlayerNotFoundException("Player not found");

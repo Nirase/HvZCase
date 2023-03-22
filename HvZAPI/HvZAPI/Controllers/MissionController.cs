@@ -36,7 +36,9 @@ namespace HvZAPI.Controllers
         public async Task<ActionResult<IEnumerable<MissionDTO>>> GetMissions(int gameId)
         {
             var subject = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            return Ok(_mapper.Map<IEnumerable<MissionDTO>>(await _missionService.GetMissions(gameId, subject)));
+            var roles = User.FindAll(ClaimTypes.Role);
+
+            return Ok(_mapper.Map<IEnumerable<MissionDTO>>(await _missionService.GetMissions(gameId, subject, roles)));
         }
 
         /// <summary>
@@ -50,10 +52,10 @@ namespace HvZAPI.Controllers
         public async Task<ActionResult<MissionDTO>> GetMissionById(int id, int gameId)
         {
             var subject = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
+            var roles = User.FindAll(ClaimTypes.Role);
             try
             {
-                return Ok(_mapper.Map<MissionDTO>(await _missionService.GetMissionById(id, gameId, subject)));
+                return Ok(_mapper.Map<MissionDTO>(await _missionService.GetMissionById(id, gameId, subject, roles)));
             }
             catch (MissionNotFoundException ex)
             {
