@@ -34,7 +34,7 @@ namespace HvZAPI.Services.Concrete
 
         public async Task<Mission> GetMissionById(int id, int gameId, string subject, List<Claim> roles)
         {
-            if (roles.Where(x => x.Value == "admin") != null)
+            if (roles.Where(x => x.Value == "admin").FirstOrDefault() != null)
             {
                 var adminMission = await _context.Missions.Include(x => x.Game).Where(x => x.GameId == gameId).FirstOrDefaultAsync(x => x.Id == id);
                 if (adminMission is null)
@@ -57,7 +57,7 @@ namespace HvZAPI.Services.Concrete
 
         public async Task<IEnumerable<Mission>> GetMissions(int gameId, string subject, List<Claim> roles)
         {
-            if (roles.Where(x => x.Value == "admin") != null)
+            if (roles.Where(x => x.Value == "admin").FirstOrDefault() != null)
                 return await _context.Missions.Include(x => x.Game).Where(x => x.GameId == gameId).ToListAsync();
 
             var player = await _context.Players.Include(x => x.User).Where(x => x.User.KeycloakId == subject).FirstOrDefaultAsync();
