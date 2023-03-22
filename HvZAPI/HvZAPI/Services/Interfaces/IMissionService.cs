@@ -20,11 +20,8 @@ namespace HvZAPI.Services.Interfaces
         /// <summary>
         /// Creates a new Mission entity
         /// </summary>
-        /// <param name="MissionerId">Id of Missioner</param>
-        /// <param name="gameId">Id of game</param>
-        /// <param name="biteCode">Supplied bitecode</param>
         /// <returns>Created Mission entity</returns>
-        Task<Mission> CreateMission(int MissionerId, int gameId, string biteCode);
+        Task<Mission> CreateMission(Mission mission);
 
         /// <summary>
         /// Deletes an existing Mission entity

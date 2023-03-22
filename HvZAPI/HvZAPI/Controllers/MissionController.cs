@@ -2,6 +2,8 @@
 using HvZAPI.Exceptions;
 using HvZAPI.Models;
 using HvZAPI.Models.DTOs.MissionDTOs;
+using HvZAPI.Models.DTOs.PlayerDTOs;
+using HvZAPI.Services.Concrete;
 using HvZAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -96,5 +98,18 @@ namespace HvZAPI.Controllers
             var result = await _missionService.UpdateMission(mission, gameId);
             return Ok(_mapper.Map<MissionDTO>(result));
         }
+
+
+        [HttpPost]
+        [ActionName(nameof(GetMissionById))]
+        public async Task<ActionResult<MissionDTO>> CreatePlayer(int gameId, CreateMissionDTO createMissionDTO)
+        {
+            if(createMissionDTO.GameId != gameId)
+                return BadRequest();
+            var mission = _mapper.Map<Mission>(createMissionDTO);
+            await _missionService.CreateMission(mission);
+            return CreatedAtAction(nameof(GetMissionById), new { id = mission.Id }, _mapper.Map<MissionDTO>(mission));
+        }
+
     }
 }
