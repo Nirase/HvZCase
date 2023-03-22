@@ -1,4 +1,6 @@
-﻿namespace HvZAPI.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace HvZAPI.Models
 {
     public class ChatMessage
     {
@@ -7,6 +9,7 @@
         public Channel Channel { get; set; }
         public Player Player { get; set; }
         public int PlayerId { get; set; }
+        [MaxLength(1000)]
         public string Contents { get; set; }
     }
 }
