@@ -6,6 +6,7 @@ using HvZAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
+using System.Security.Claims;
 
 namespace HvZAPI.Controllers
 {
@@ -34,6 +35,7 @@ namespace HvZAPI.Controllers
         [Authorize(Roles = "user")]
         public async Task<ActionResult<IEnumerable<MissionDTO>>> GetMissions(int gameId)
         {
+            var subject = User.FindFirstValue(ClaimTypes.NameIdentifier);
             return Ok(_mapper.Map<IEnumerable<MissionDTO>>(await _missionService.GetMissions(gameId)));
         }
 
@@ -47,6 +49,8 @@ namespace HvZAPI.Controllers
         [Authorize(Roles = "user")]
         public async Task<ActionResult<MissionDTO>> GetMissionById(int id, int gameId)
         {
+            var subject = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             try
             {
                 return Ok(_mapper.Map<MissionDTO>(await _missionService.GetMissionById(id, gameId)));
@@ -105,6 +109,7 @@ namespace HvZAPI.Controllers
         /// <returns></returns>
         [HttpPost]
         [ActionName(nameof(GetMissionById))]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<MissionDTO>> CreateMission(int gameId, CreateMissionDTO createMissionDTO)
         {
             if(createMissionDTO.GameId != gameId)

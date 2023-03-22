@@ -24,29 +24,45 @@ namespace HvZAPI.Services.Concrete
 
         public async Task DeleteMission(int missionId, int gameId)
         {
-            var mission = await GetMissionById(missionId, gameId);
+            var mission = await _context.Missions.Include(x => x.Game).Where(x => x.GameId == gameId).FirstOrDefaultAsync(x => x.Id == missionId);
             if (mission is null)
                 throw new MissionNotFoundException($"Mission {missionId} not found");
             _context.Missions.Remove(mission);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Mission> GetMissionById(int id, int gameId)
+        public async Task<Mission> GetMissionById(int id, int gameId, string subject)
         {
+            var player = await _context.Players.Include(x => x.User).Where(x => x.User.KeycloakId == subject).FirstOrDefaultAsync();
+            if (player is null)
+                throw new PlayerNotFoundException("Player not found");
+
             var mission = await _context.Missions.Include(x => x.Game).Where(x => x.GameId == gameId).FirstOrDefaultAsync(x => x.Id == id);
             if (mission is null)
                 throw new MissionNotFoundException("Mission not found");
-            return mission;
+            if (player.IsHuman && mission.VisibleToHumans)
+                return mission;
+            if (!player.IsHuman && mission.VisibleToZombies)
+                return mission;
+            throw new MissionNotVisibleException("This mission is not visible to the subject");
         }
 
-        public async Task<IEnumerable<Mission>> GetMissions(int gameId)
+        public async Task<IEnumerable<Mission>> GetMissions(int gameId, string subject)
         {
-            return await _context.Missions.Include(x => x.Game).Where(x => x.GameId == gameId).ToListAsync();
+            var player = await _context.Players.Include(x => x.User).Where(x => x.User.KeycloakId == subject).FirstOrDefaultAsync();
+            if (player is null)
+                throw new PlayerNotFoundException("Player not found");
+            
+            if(player.IsHuman)
+                return await _context.Missions.Include(x => x.Game).Where(x => x.GameId == gameId).Where(x => x.VisibleToHumans).ToListAsync();
+            return await _context.Missions.Include(x => x.Game).Where(x => x.GameId == gameId).Where(x => x.VisibleToZombies).ToListAsync();
         }
 
         public async Task<Mission> UpdateMission(Mission mission, int gameId)
         {
-            var foundMission = await GetMissionById(mission.Id, gameId);
+            var foundMission = await _context.Missions.Include(x => x.Game).Where(x => x.GameId == gameId).FirstOrDefaultAsync(x => x.Id == mission.Id);
+            if (foundMission is null)
+                throw new MissionNotFoundException("Mission not found");
             foundMission.StartDate = mission.StartDate;
             foundMission.Name = mission.Name;
             foundMission.Description = mission.Description;
