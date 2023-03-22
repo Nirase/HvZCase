@@ -2,12 +2,11 @@
 using HvZAPI.Exceptions;
 using HvZAPI.Models;
 using HvZAPI.Models.DTOs.MissionDTOs;
-using HvZAPI.Models.DTOs.PlayerDTOs;
-using HvZAPI.Services.Concrete;
 using HvZAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
+using System.Security.Claims;
 
 namespace HvZAPI.Controllers
 {
@@ -36,7 +35,10 @@ namespace HvZAPI.Controllers
         [Authorize(Roles = "user")]
         public async Task<ActionResult<IEnumerable<MissionDTO>>> GetMissions(int gameId)
         {
-            return Ok(_mapper.Map<IEnumerable<MissionDTO>>(await _missionService.GetMissions(gameId)));
+            var subject = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var roles = User.FindAll(ClaimTypes.Role).ToList();
+
+            return Ok(_mapper.Map<IEnumerable<MissionDTO>>(await _missionService.GetMissions(gameId, subject, roles)));
         }
 
         /// <summary>
@@ -49,9 +51,11 @@ namespace HvZAPI.Controllers
         [Authorize(Roles = "user")]
         public async Task<ActionResult<MissionDTO>> GetMissionById(int id, int gameId)
         {
+            var subject = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var roles = User.FindAll(ClaimTypes.Role).ToList();
             try
             {
-                return Ok(_mapper.Map<MissionDTO>(await _missionService.GetMissionById(id, gameId)));
+                return Ok(_mapper.Map<MissionDTO>(await _missionService.GetMissionById(id, gameId, subject, roles)));
             }
             catch (MissionNotFoundException ex)
             {
@@ -99,10 +103,16 @@ namespace HvZAPI.Controllers
             return Ok(_mapper.Map<MissionDTO>(result));
         }
 
-
+        /// <summary>
+        /// Creates a new mission entity
+        /// </summary>
+        /// <param name="gameId">Id to create mission in</param>
+        /// <param name="createMissionDTO">Mission entity to create</param>
+        /// <returns></returns>
         [HttpPost]
         [ActionName(nameof(GetMissionById))]
-        public async Task<ActionResult<MissionDTO>> CreatePlayer(int gameId, CreateMissionDTO createMissionDTO)
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult<MissionDTO>> CreateMission(int gameId, CreateMissionDTO createMissionDTO)
         {
             if(createMissionDTO.GameId != gameId)
                 return BadRequest();

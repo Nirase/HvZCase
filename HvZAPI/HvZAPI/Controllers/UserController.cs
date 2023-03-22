@@ -124,8 +124,16 @@ namespace HvZAPI.Controllers
         public async Task<ActionResult<User>> CreateUser(CreateUserDTO createUserDTO)
         {
             var user = _mapper.Map<User>(createUserDTO);
-            await _userService.AddUser(user);
-            return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
+            try
+            {
+                await _userService.AddUser(user);
+                return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
+            }
+            catch(UserAlreadyExistsException ex)
+            {
+                return Ok();
+            }
+
         }
 
         /// <summary>

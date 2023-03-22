@@ -34,6 +34,7 @@ namespace HvZAPI.Controllers
         /// </summary>
         /// <returns>Enumerable of all SquadCheckIns</returns>
         [HttpGet]
+        [Authorize(Roles = "user")]
         public async Task<ActionResult<IEnumerable<SquadCheckInDTO>>> GetSquadCheckIns(int gameId, int squadId)
         {
             return Ok(_mapper.Map<IEnumerable<SquadCheckInDTO>>(await _squadCheckInService.GetSquadCheckIns(gameId, squadId)));
@@ -43,8 +44,12 @@ namespace HvZAPI.Controllers
         /// Fetches a SquadCheckIn entity based on id
         /// </summary>
         /// <param name="id">Entity id</param>
+        /// <param name="gameId">Game id</param>
+        /// <param name="squadId">Squad id</param>
         /// <returns>Found SquadCheckIn entity</returns>
         [HttpGet("{id}")]
+        [Authorize(Roles = "user")]
+
         public async Task<ActionResult<SquadCheckInDTO>> GetSquadCheckInById(int id, int gameId, int squadId)
         {
             try
@@ -60,8 +65,15 @@ namespace HvZAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Creates a new squad checkin marker
+        /// </summary>
+        /// <param name="gameId">Game id</param>
+        /// <param name="createSquadCheckInDTO">Squad check in to create</param>
+        /// <returns>Fully created squad check in</returns>
         [HttpPost]
         [ActionName(nameof(GetSquadCheckInById))]
+        [Authorize(Roles = "user")]
         public async Task<ActionResult<SquadCheckInDTO>> CreateSquadCheckIn(int gameId, CreateSquadCheckInDTO createSquadCheckInDTO)
         {
             var squadCheckIn = _mapper.Map<SquadCheckIn>(createSquadCheckInDTO);
@@ -74,7 +86,9 @@ namespace HvZAPI.Controllers
         /// </summary>
         /// <param name="id">Id of entity to delete</param>
         /// <param name="gameId">Game that SquadCheckIn is in</param>
+        /// <param name="squadId">Squad id</param>
         [HttpDelete]
+        [Authorize(Roles = "user")]
         public async Task<IActionResult> DeleteSquadCheckIn(int id, int gameId, int squadId)
         {
             try

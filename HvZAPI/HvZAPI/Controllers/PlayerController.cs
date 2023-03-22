@@ -28,6 +28,11 @@ namespace HvZAPI.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Gets all players in a game
+        /// </summary>
+        /// <param name="gameId">Game id</param>
+        /// <returns>Enumerable of players</returns>
         [HttpGet]
         [Authorize(Roles = "user")]
         public async Task<ActionResult<IEnumerable<PlayerDTO>>> GetPlayers(int gameId)
@@ -35,6 +40,12 @@ namespace HvZAPI.Controllers
             return Ok(_mapper.Map<IEnumerable<PlayerDTO>>(await _playerService.GetPlayers(gameId)));
         }
 
+        /// <summary>
+        /// Gets a player entity by id
+        /// </summary>
+        /// <param name="gameId">Game id</param>
+        /// <param name="id">Player id</param>
+        /// <returns>Player entity</returns>
         [HttpGet("{id}")]
         [Authorize(Roles = "user")]
         public async Task<ActionResult<PlayerDTO>> GetPlayerById(int gameId, int id)
@@ -49,6 +60,12 @@ namespace HvZAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Creates a new player entity 
+        /// </summary>
+        /// <param name="gameId">Game to create player in</param>
+        /// <param name="createPlayerDTO">Player entity to create</param>
+        /// <returns>Fully created player entity</returns>
         [HttpPost]
         [ActionName(nameof(GetPlayerById))]
         [Authorize(Roles = "user")]
@@ -70,6 +87,12 @@ namespace HvZAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Updates an existing player
+        /// </summary>
+        /// <param name="gameId">Game to update in</param>
+        /// <param name="updatedPlayer">Updated player</param>
+        /// <returns>Fully updated player entity</returns>
         [HttpPatch("{id}")]
         [Authorize(Roles = "admin")]
         public async Task<ActionResult<PlayerDTO>> UpdatePlayer(int gameId, UpdatePlayerDTO updatedPlayer)
@@ -90,6 +113,12 @@ namespace HvZAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Deletes an existing player
+        /// </summary>
+        /// <param name="gameId">Game id</param>
+        /// <param name="playerId">Player id</param>
+        /// <returns>NoContent or NotFound</returns>
         [HttpDelete]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeletePlayer(int gameId, int playerId)

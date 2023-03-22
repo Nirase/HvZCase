@@ -31,7 +31,7 @@ namespace HvZAPI.Profiles
                 .ForMember(dto => dto.Players, options =>
                 {
                     options.MapFrom(src => src.Players.Select(x => new LightweightPlayerDTO
-                    {   
+                    {
                         Id = x.Id,
                         URL = $"api/game/{x.GameId}/player/{x.Id}",
                         FirstName = x.User != null ? x.User.FirstName : "",
@@ -44,28 +44,14 @@ namespace HvZAPI.Profiles
                     options.MapFrom(src => src.Kills.Select(x => new LightweightKillDTO
                     {
                         URL = $"api/game/{x.GameId}/kill/{x.Id}",
-                        Id= x.Id,
+                        Id = x.Id,
                         KillerId = x.KillerId,
-                        TimeOfDeath= x.TimeOfDeath,
-                        Location= x.Location,
+                        TimeOfDeath = x.TimeOfDeath,
+                        Location = x.Location,
                         VictimId = x.VictimId
                     }));
-                })
-                .ForMember(dto => dto.Missions, options =>
-                {
-                    options.MapFrom(src => src.Missions.Select(x => new MissionDTO
-                    {
-                        Id = x.Id,
-                        Name = x.Name,
-                        Description = x.Description,
-                        StartDate = x.StartDate,
-                        EndDate = x.EndDate,
-                        Game = $"api/v1/game/{x.GameId}",
-                        Location = x.Location,
-                        VisibleToHumans = x.VisibleToHumans,
-                        VisibleToZombies = x.VisibleToZombies
-                    }));
                 });
+                
             CreateMap<UpdateGameDTO, Game>()
                 .ForMember(game => game.GameState, options => { options.MapFrom(src => src.GameState); });
             CreateMap<CreateGameDTO, Game>()

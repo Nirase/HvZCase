@@ -16,6 +16,5 @@ namespace HvZAPI.Models.DTOs.GameDTOs
         public string EndDate { get; set; }
         public List<LightweightPlayerDTO> Players { get; set; }
         public List<LightweightKillDTO> Kills { get; set; }
-        public List<MissionDTO> Missions { get; set; }
     }
 }

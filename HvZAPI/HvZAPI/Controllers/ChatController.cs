@@ -98,7 +98,7 @@ namespace HvZAPI.Controllers
         public async Task<ActionResult> CreateMessage(CreateChatMessageDTO message, int gameId)
         {
             if (message.Contents.Length <= 0)
-                return BadRequest();
+                return BadRequest(new ProblemDetails { Detail = "Message content has to be longer than 0"});
             try
             {
                 var created = await _chatMessageService.CreateChatMessage(_mapper.Map<ChatMessage>(message), gameId);
