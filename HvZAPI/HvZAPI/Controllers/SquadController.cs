@@ -42,6 +42,19 @@ namespace HvZAPI.Controllers
         }
 
         /// <summary>
+        /// Gets all squads in a game
+        /// </summary>
+        /// <param name="gameId">Game id</param>
+        /// <returns>Found squads</returns>
+        [HttpGet("withdetails")]
+        [Authorize(Roles = "user")]
+        public async Task<ActionResult<IEnumerable<DetailedSquadDTO>>> GetSquadsWithDetails(int gameId)
+        {
+            var squad = await _squadService.GetSquads(gameId);
+            return Ok(_mapper.Map<IEnumerable<DetailedSquadDTO>>(squad));
+        }
+
+        /// <summary>
         /// Gets a squad based on id
         /// </summary>
         /// <param name="id">Id of squad entity</param>
