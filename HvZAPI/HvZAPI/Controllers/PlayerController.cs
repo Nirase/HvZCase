@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Net.Mime;
+using System.Security.Claims;
 
 namespace HvZAPI.Controllers
 {
@@ -41,6 +42,18 @@ namespace HvZAPI.Controllers
         }
 
         /// <summary>
+        /// Gets all players in a game
+        /// </summary>
+        /// <param name="gameId">Game id</param>
+        /// <returns>Enumerable of players</returns>
+        [HttpGet("withdetails")]
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult<IEnumerable<DetailedPlayerDTO>>> GetDetailedPlayers(int gameId)
+        {
+            return Ok(_mapper.Map<IEnumerable<DetailedPlayerDTO>>(await _playerService.GetPlayers(gameId)));
+        }
+
+        /// <summary>
         /// Gets a player entity by id
         /// </summary>
         /// <param name="gameId">Game id</param>
@@ -48,15 +61,21 @@ namespace HvZAPI.Controllers
         /// <returns>Player entity</returns>
         [HttpGet("{id}")]
         [Authorize(Roles = "user")]
-        public async Task<ActionResult<PlayerDTO>> GetPlayerById(int gameId, int id)
+        public async Task<ActionResult<DetailedPlayerDTO>> GetPlayerById(int gameId, int id)
         {
+            var subject = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var roles = User.FindAll(ClaimTypes.Role).ToList();
             try
             {
-                return Ok(_mapper.Map<PlayerDTO>(await _playerService.GetPlayer(gameId, id)));
+                return Ok(_mapper.Map<DetailedPlayerDTO>(await _playerService.GetPlayer(gameId, id, subject, roles)));
             }
             catch(PlayerNotFoundException ex)
             {
                 return NotFound(new ProblemDetails { Detail = ex.Message });
+            }
+            catch(SubjectDoesNotMatchException ex)
+            {
+                return BadRequest(new ProblemDetails { Detail = ex.Message });
             }
         }
 
