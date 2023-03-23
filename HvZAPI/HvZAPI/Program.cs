@@ -39,18 +39,7 @@ internal class Program
         builder.Services.AddTransient<IChannelService, ChannelService>();
         builder.Services.AddEndpointsApiExplorer();
 
-        builder.Services.AddCors(options =>
-        {
-            options.AddDefaultPolicy(
-         policy =>
-         {
-             policy.WithOrigins("http://localhost:3000")
-             .AllowAnyHeader()
-             .AllowAnyMethod();
-         });
-        });
-
-        var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
         var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
 
         builder.Services.AddCors(options =>
@@ -58,7 +47,7 @@ internal class Program
             options.AddDefaultPolicy(
          policy =>
          {
-             policy.WithOrigins("http://localhost:3000")
+             policy.WithOrigins("http://localhost:3000", "https://hv-z-case-frontend-acs12524m-nirase.vercel.app/")
              .AllowAnyHeader()
              .AllowAnyMethod();
          });
@@ -82,12 +71,12 @@ internal class Program
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
-                    ValidIssuer = builder.Configuration["TokenSecrets:IssuerUrl"],
+                    ValidIssuer = builder.Configuration["ISSUER_URI"],
                     ValidAudience = "account",
                     IssuerSigningKeyResolver = (token, securityToken, kid, parameters) =>
                     {
                         var client = new HttpClient();
-                        var keyuri = builder.Configuration["TokenSecrets:KeyUrl"];
+                        var keyuri = builder.Configuration["KEY_URI"];
 
                         var response = client.GetAsync(keyuri).Result;
                         var responseString = response.Content.ReadAsStringAsync().Result;
