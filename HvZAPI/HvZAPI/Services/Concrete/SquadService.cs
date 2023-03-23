@@ -50,7 +50,7 @@ namespace HvZAPI.Services.Concrete
 
         public async Task<Squad> GetSquadById(int id, int gameId)
         {
-            var squad = await _context.Squads.Include(x => x.Players).Include(x => x.SquadCheckIns).Where(x => x.GameId == gameId).FirstOrDefaultAsync(x => x.Id == id);
+            var squad = await _context.Squads.Include(x => x.Players).ThenInclude(x => x.User).Include(x => x.SquadCheckIns).Where(x => x.GameId == gameId).FirstOrDefaultAsync(x => x.Id == id);
             if (squad is null)
                 throw new Exception("Squad not found");
             return squad;
