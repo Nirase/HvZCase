@@ -1,4 +1,5 @@
 ﻿using HvZAPI.Models;
+using System.Security.Claims;
 
 namespace HvZAPI.Services.Interfaces
 {
@@ -14,7 +15,7 @@ namespace HvZAPI.Services.Interfaces
         /// Fetches a player in a game based on id
         /// </summary>
         /// <returns> Player entity </returns>
-        Task<Player> GetPlayer(int gameId, int playerId);
+        Task<Player> GetPlayer(int gameId, int playerId, string subject, List<Claim> roles);
 
         /// <summary>
         /// 

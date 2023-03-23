@@ -4,6 +4,7 @@ using HvZAPI.Models;
 using HvZAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Server.IIS.Core;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace HvZAPI.Services.Concrete
 {
@@ -42,7 +43,7 @@ namespace HvZAPI.Services.Concrete
 
         public async Task DeletePlayer(int gameId, int playerId)
         {
-            var player = await GetPlayer(gameId, playerId);
+            var player = await _context.Players.Include(x => x.User).FirstOrDefaultAsync(x => x.Id == playerId && x.GameId == gameId);
 
             if (player is null)
                 throw new PlayerNotFoundException("Player not found");
@@ -54,11 +55,15 @@ namespace HvZAPI.Services.Concrete
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Player> GetPlayer(int gameId, int playerId)
+        public async Task<Player> GetPlayer(int gameId, int playerId, string subject, List<Claim> roles)
         {
             var player = await _context.Players.Include(x => x.User).FirstOrDefaultAsync(x => x.Id == playerId && x.GameId == gameId);
             if (player is null)
                 throw new PlayerNotFoundException("Player Not Found");
+            if (roles.Where(x => x.Value == "admin").FirstOrDefault() != null)
+                return player;
+            if (player.User.KeycloakId != subject)
+                throw new SubjectDoesNotMatchException("Subject does not have permissions to get value");
             return player;
         }
 
@@ -69,7 +74,7 @@ namespace HvZAPI.Services.Concrete
 
         public async Task<Player> UpdatePlayer(int gameId, Player player)
         {
-            var foundPlayer = await GetPlayer(gameId, player.Id);
+            var foundPlayer = await _context.Players.Include(x => x.User).FirstOrDefaultAsync(x => x.Id == player.Id && x.GameId == gameId);
             if (foundPlayer == null)
                 throw new PlayerNotFoundException("Player not found");
             
