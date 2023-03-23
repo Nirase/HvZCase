@@ -74,6 +74,26 @@ namespace HvZAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Gets a squad based on id with details
+        /// </summary>
+        /// <param name="id">Id of squad entity</param>
+        /// <param name="gameId">Game id to search within</param>
+        /// <returns>Found squad</returns>
+        [HttpGet("{id}/withdetails")]
+        [Authorize(Roles = "user")]
+        public async Task<ActionResult<DetailedSquadDTO>> GetSquadByIdWithDetails(int id, int gameId)
+        {
+            try
+            {
+                return Ok(_mapper.Map<DetailedSquadDTO>(await _squadService.GetSquadById(id, gameId)));
+            }
+            catch (SquadNotFoundException ex)
+            {
+                return NotFound(new ProblemDetails { Detail = ex.Message });
+            }
+        }
+
 
         /// <summary>
         /// Creates a new squad entity
