@@ -66,7 +66,7 @@ namespace HvZAPI.Services.Concrete
 
         public async Task<IEnumerable<Squad>> GetSquads(int gameId)
         {
-            return await _context.Squads.Include(x => x.Players).Include(x => x.SquadCheckIns).Where(x => x.GameId == gameId).ToListAsync();
+            return await _context.Squads.Include(x => x.Players).ThenInclude(x => x.User).Include(x => x.SquadCheckIns).Where(x => x.GameId == gameId).ToListAsync();
         }
 
         public async Task<Squad> JoinSquad(int gameId, int squadId, int playerId, string subject)

@@ -98,7 +98,7 @@ namespace HvZAPI.Controllers
         /// </summary>
         /// <param name="id">Keycloak entity id</param>
         /// <returns>Found User entity</returns>
-        [HttpGet("/keycloak/{id}")]
+        [HttpGet("keycloak/{id}")]
         [Authorize(Roles = "user")]
         public async Task<ActionResult<UserDTO>> GetUserByKeycloakId(string id)
         {
