@@ -33,6 +33,10 @@ namespace HvZAPI.Services.Concrete
             if(foundSquad != null)
                 throw new SquadNameAlreadyInUseException($"Squad with name {squad.Name} already exists");
 
+            var channel = new Channel { GameId = gameId, Name = squad.Name };
+            await _context.Channels.AddAsync(channel);
+            await _context.SaveChangesAsync();
+            squad.ChannelId = channel.Id;
             await _context.Squads.AddAsync(squad);
             await _context.SaveChangesAsync();
             creator.SquadId = squad.Id;
