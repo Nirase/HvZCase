@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Net.Mime;
+using System.Security.Claims;
 
 namespace HvZAPI.Controllers
 {
@@ -37,7 +38,15 @@ namespace HvZAPI.Controllers
         [Authorize(Roles = "user")]
         public async Task<ActionResult<IEnumerable<SquadCheckInDTO>>> GetSquadCheckIns(int gameId, int squadId)
         {
-            return Ok(_mapper.Map<IEnumerable<SquadCheckInDTO>>(await _squadCheckInService.GetSquadCheckIns(gameId, squadId)));
+            var subject = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            try
+            {
+                return Ok(_mapper.Map<IEnumerable<SquadCheckInDTO>>(await _squadCheckInService.GetSquadCheckIns(gameId, squadId, subject)));
+            }
+            catch (SubjectDoesNotMatchException ex)
+            {
+                return Unauthorized(new ProblemDetails { Detail = ex.Message });
+            }
         }
 
         /// <summary>
@@ -52,9 +61,11 @@ namespace HvZAPI.Controllers
 
         public async Task<ActionResult<SquadCheckInDTO>> GetSquadCheckInById(int id, int gameId, int squadId)
         {
+            var subject = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             try
             {
-                return Ok(_mapper.Map<SquadCheckInDTO>(await _squadCheckInService.GetSquadCheckInById(id, gameId, squadId)));
+                return Ok(_mapper.Map<SquadCheckInDTO>(await _squadCheckInService.GetSquadCheckInById(id, gameId, squadId, subject)));
             }
             catch (SquadCheckInNotFoundException ex)
             {
@@ -62,6 +73,10 @@ namespace HvZAPI.Controllers
                 {
                     Detail = ex.Message
                 });
+            }
+            catch (SubjectDoesNotMatchException ex)
+            {
+                return Unauthorized(new ProblemDetails { Detail = ex.Message });
             }
         }
 
@@ -76,9 +91,18 @@ namespace HvZAPI.Controllers
         [Authorize(Roles = "user")]
         public async Task<ActionResult<SquadCheckInDTO>> CreateSquadCheckIn(int gameId, CreateSquadCheckInDTO createSquadCheckInDTO)
         {
+            var subject = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             var squadCheckIn = _mapper.Map<SquadCheckIn>(createSquadCheckInDTO);
-            var created = await _squadCheckInService.CreateSquadCheckIn(squadCheckIn, gameId, createSquadCheckInDTO.SquadId);
-            return CreatedAtAction(nameof(GetSquadCheckInById), new { id = created.Id }, _mapper.Map<SquadCheckInDTO>(created));
+            try
+            {
+                var created = await _squadCheckInService.CreateSquadCheckIn(squadCheckIn, gameId, createSquadCheckInDTO.SquadId, subject);
+                return CreatedAtAction(nameof(GetSquadCheckInById), new { id = created.Id }, _mapper.Map<SquadCheckInDTO>(created));
+            }
+            catch (SubjectDoesNotMatchException ex)
+            {
+                return Unauthorized(new ProblemDetails { Detail = ex.Message });
+            }
         }
 
         /// <summary>
@@ -91,13 +115,19 @@ namespace HvZAPI.Controllers
         [Authorize(Roles = "user")]
         public async Task<IActionResult> DeleteSquadCheckIn(int id, int gameId, int squadId)
         {
+            var subject = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             try
             {
-                await _squadCheckInService.DeleteSquadCheckIn(id, gameId, squadId);
+                await _squadCheckInService.DeleteSquadCheckIn(id, gameId, squadId, subject);
             }
             catch (SquadCheckInNotFoundException error)
             {
                 return NotFound(new ProblemDetails { Detail = error.Message });
+            }
+            catch(SubjectDoesNotMatchException ex)
+            {
+                return Unauthorized(new ProblemDetails { Detail = ex.Message });
             }
             return NoContent();
         }

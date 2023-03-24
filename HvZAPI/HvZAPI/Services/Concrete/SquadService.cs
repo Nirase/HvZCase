@@ -3,6 +3,7 @@ using HvZAPI.Exceptions;
 using HvZAPI.Models;
 using HvZAPI.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace HvZAPI.Services.Concrete
 {
@@ -41,15 +42,18 @@ namespace HvZAPI.Services.Concrete
 
         public async Task DeleteSquad(int id, int gameId)
         {
-            var foundSquad = await GetSquadById(id, gameId);
+            var foundSquad = await _context.Squads.Include(x => x.Players).ThenInclude(x => x.User).Include(x => x.SquadCheckIns).Where(x => x.GameId == gameId).FirstOrDefaultAsync(x => x.Id == id);
             if (foundSquad == null)
                 throw new SquadNotFoundException("Squad not found");
             _context.Squads.Remove(foundSquad);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Squad> GetSquadById(int id, int gameId)
+        public async Task<Squad> GetSquadById(int id, int gameId, string subject)
         {
+            var issuer = await _context.Players.Include(x => x.User).Where(x => x.User.KeycloakId == subject).Where(x => x.SquadId == id).FirstOrDefaultAsync();
+            if (issuer is null)
+                throw new SubjectDoesNotMatchException("Subject is not part of squad");
             var squad = await _context.Squads.Include(x => x.Players).ThenInclude(x => x.User).Include(x => x.SquadCheckIns).Where(x => x.GameId == gameId).FirstOrDefaultAsync(x => x.Id == id);
             if (squad is null)
                 throw new Exception("Squad not found");
@@ -126,10 +130,12 @@ namespace HvZAPI.Services.Concrete
 
         public async Task<Squad> UpdateSquad(Squad Squad, int gameId)
         {
-            var foundGame = await GetSquadById(Squad.Id, gameId);
-            foundGame.Name = Squad.Name;
+            var foundSquad = await _context.Squads.Include(x => x.Players).ThenInclude(x => x.User).Include(x => x.SquadCheckIns).Where(x => x.GameId == gameId).FirstOrDefaultAsync(x => x.Id == Squad.Id);
+            if (foundSquad is null)
+                throw new SquadNotFoundException("Squad not found");
+            foundSquad.Name = Squad.Name;
             await _context.SaveChangesAsync();
-            return foundGame;
+            return foundSquad;
         }
     }
 }

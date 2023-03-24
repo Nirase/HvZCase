@@ -42,12 +42,12 @@ namespace HvZAPI.Controllers
         }
 
         /// <summary>
-        /// Gets all squads in a game
+        /// Gets all squads in a game with details
         /// </summary>
         /// <param name="gameId">Game id</param>
         /// <returns>Found squads</returns>
         [HttpGet("withdetails")]
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<IEnumerable<DetailedSquadDTO>>> GetSquadsWithDetails(int gameId)
         {
             var squad = await _squadService.GetSquads(gameId);
@@ -64,9 +64,11 @@ namespace HvZAPI.Controllers
         [Authorize(Roles = "user")]
         public async Task<ActionResult<SquadDTO>> GetSquadById(int id, int gameId)
         {
+            var subject = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             try
             {
-                return Ok(_mapper.Map<SquadDTO>(await _squadService.GetSquadById(id, gameId)));
+                return Ok(_mapper.Map<SquadDTO>(await _squadService.GetSquadById(id, gameId, subject)));
             }
             catch(SquadNotFoundException ex)
             {
@@ -84,13 +86,19 @@ namespace HvZAPI.Controllers
         [Authorize(Roles = "user")]
         public async Task<ActionResult<DetailedSquadDTO>> GetSquadByIdWithDetails(int id, int gameId)
         {
+            var subject = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             try
             {
-                return Ok(_mapper.Map<DetailedSquadDTO>(await _squadService.GetSquadById(id, gameId)));
+                return Ok(_mapper.Map<DetailedSquadDTO>(await _squadService.GetSquadById(id, gameId, subject)));
             }
             catch (SquadNotFoundException ex)
             {
                 return NotFound(new ProblemDetails { Detail = ex.Message });
+            }
+            catch(SubjectDoesNotMatchException ex)
+            {
+                return Unauthorized(new ProblemDetails { Detail = ex.Message });
             }
         }
 
@@ -129,7 +137,7 @@ namespace HvZAPI.Controllers
             }
             catch (SubjectDoesNotMatchException ex)
             {
-                return BadRequest(new ProblemDetails { Detail = ex.Message });
+                return Unauthorized(new ProblemDetails { Detail = ex.Message });
             }
         }
 
@@ -167,7 +175,7 @@ namespace HvZAPI.Controllers
             }
             catch (SubjectDoesNotMatchException ex)
             {
-                return BadRequest(new ProblemDetails { Detail = ex.Message });
+                return Unauthorized(new ProblemDetails { Detail = ex.Message });
             }
         }
 
@@ -209,7 +217,7 @@ namespace HvZAPI.Controllers
             }
             catch(SubjectDoesNotMatchException ex)
             {
-                return BadRequest(new ProblemDetails { Detail = ex.Message });
+                return Unauthorized(new ProblemDetails { Detail = ex.Message });
             }
         }
 
