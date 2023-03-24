@@ -9,6 +9,7 @@ using HvZAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
+using System.Security.Claims;
 
 namespace HvZAPI.Controllers
 {
@@ -75,10 +76,11 @@ namespace HvZAPI.Controllers
         [Authorize(Roles = "user")]
         public async Task<ActionResult<Kill>> CreateKill(CreateKillDTO kill, int gameId)
         {
+            var subject = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var dto = _mapper.Map<Kill>(kill);
             try
             {
-                var created = await _killService.CreateKill(dto, gameId, kill.BiteCode);
+                var created = await _killService.CreateKill(dto, gameId, kill.BiteCode, subject);
                 return CreatedAtAction(nameof(GetKillById), new { id = created.Id }, kill);
             }
             catch(PlayerNotFoundException ex)

@@ -16,6 +16,7 @@ namespace HvZAPI.Services.Interfaces
         /// Fetches Kill based on id
         /// </summary>
         /// <param name="id">Kill Id to find</param>
+        /// <param name="gameId">Game id to search within</param>
         /// <returns>Found Kill entity</returns>
         Task<Kill> GetKillById(int id, int gameId);
 
@@ -25,8 +26,9 @@ namespace HvZAPI.Services.Interfaces
         /// <param name="kill">Kill to create</param>
         /// <param name="gameId">Id of game</param>
         /// <param name="biteCode">Supplied bitecode</param>
+        /// <param name="subject">Subject issuing the request</param>
         /// <returns>Created Kill entity</returns>
-        Task<Kill> CreateKill(Kill kill, int gameId, string biteCode);
+        Task<Kill> CreateKill(Kill kill, int gameId, string biteCode, string subject);
 
         /// <summary>
         /// Deletes an existing Kill entity

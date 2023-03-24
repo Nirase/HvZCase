@@ -20,10 +20,11 @@ namespace HvZAPI.Services.Interfaces
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="gameId"></param>
-        /// <param name="player"></param>
+        /// <param name="gameId">Game to add player to</param>
+        /// <param name="player">Player to add</param>
+        /// <param name="subject">Subject issuing request</param>
         /// <returns></returns>
-        Task<Player> AddPlayer(int gameId, Player player);
+        Task<Player> AddPlayer(int gameId, Player player, string subject);
 
         /// <summary>
         /// Fetches a player in a game based on id

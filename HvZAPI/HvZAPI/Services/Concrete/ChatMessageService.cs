@@ -16,8 +16,12 @@ namespace HvZAPI.Services.Concrete
             _context = context;
         }
 
-        public async Task<ChatMessage> CreateChatMessage(ChatMessage chatMessage, int gameId)
+        public async Task<ChatMessage> CreateChatMessage(ChatMessage chatMessage, int gameId, string subject)
         {
+            var sender = await _context.Players.Include(x => x.User).Where(x => x.Id == chatMessage.PlayerId).Where(x => x.User.KeycloakId == subject).FirstOrDefaultAsync();
+            if (sender is null)
+                throw new PlayerNotFoundException("Player not found");
+
             await _context.ChatMessages.AddAsync(chatMessage);
             await _context.SaveChangesAsync();
             var created = await GetChatMessageById(chatMessage.Id, gameId);
@@ -32,9 +36,6 @@ namespace HvZAPI.Services.Concrete
               "e346b81befca052d8721",
               "10876182a6c82c619b0b",
               options);
-            var sender = await _context.Players.Include(x => x.User).Where(x => x.Id == chatMessage.PlayerId).FirstOrDefaultAsync();
-            if (sender is null)
-                throw new PlayerNotFoundException($"Player {chatMessage.PlayerId} not found");
             var result = await pusher.TriggerAsync(
               created.Channel.Name,
               "MessageRecieved",

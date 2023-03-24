@@ -16,16 +16,13 @@ namespace HvZAPI.Services.Concrete
             _context = context;
         }
 
-        public async Task<Player> AddPlayer(int gameId, Player player)
+        public async Task<Player> AddPlayer(int gameId, Player player, string subject)
         {
             var game = await _context.Games.FirstOrDefaultAsync(x => x.Id == gameId);
             if (game is null)
                 throw new GameNotFoundException("Game not found");
 
-            //player.IsHuman = true;
-            //player.IsPatientZero = false;
-            //player.GameId= gameId;
-
+            
             var users = await _context.Users.FirstOrDefaultAsync(x => x.Id == player.UserId);
             if (users is null)
                 throw new UserNotFoundException($"User {player.UserId} not found");
@@ -35,6 +32,10 @@ namespace HvZAPI.Services.Concrete
                 if (existingPlayer.UserId == player.UserId)
                     throw new PlayerAlreadyInGameException("Player already in game");
             }
+             
+            var issuer = await _context.Users.Where(x => x.KeycloakId == subject).FirstOrDefaultAsync();
+            if (issuer is null || issuer.Id != users.Id)
+                throw new SubjectDoesNotMatchException("Subject does not match request");
             _context.Players.Add(player);
             game.Players.Add(player);
             await _context.SaveChangesAsync();
@@ -51,6 +52,11 @@ namespace HvZAPI.Services.Concrete
 
             if (game is null)
                 throw new GameNotFoundException("Game not found");
+
+            var kills = await _context.Kills.Where(x => x.KillerId == playerId || x.VictimId == playerId).ToListAsync();
+            foreach (var kill in kills)
+                _context.Kills.Remove(kill);
+            await _context.SaveChangesAsync();
             _context.Players.Remove(player);
             await _context.SaveChangesAsync();
         }
