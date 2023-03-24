@@ -16,12 +16,12 @@ namespace HvZAPI.Services.Concrete
             _context = context;
         }
 
-        public async Task<Player> AddPlayer(int gameId, Player player, string subject)
+        public async Task<Player> AddPlayer(int gameId, Player player, string subject, List<Claim> roles)
         {
             var game = await _context.Games.FirstOrDefaultAsync(x => x.Id == gameId);
             if (game is null)
                 throw new GameNotFoundException("Game not found");
-
+            var admin = roles.Where(x => x.Value == "admin").FirstOrDefault();
             
             var users = await _context.Users.FirstOrDefaultAsync(x => x.Id == player.UserId);
             if (users is null)
@@ -34,7 +34,7 @@ namespace HvZAPI.Services.Concrete
             }
              
             var issuer = await _context.Users.Where(x => x.KeycloakId == subject).FirstOrDefaultAsync();
-            if (issuer is null || issuer.Id != users.Id)
+            if ((issuer is null || issuer.Id != users.Id) && admin == null)
                 throw new SubjectDoesNotMatchException("Subject does not match request");
             _context.Players.Add(player);
             game.Players.Add(player);
