@@ -14,8 +14,11 @@ namespace HvZAPI.Services.Concrete
             _context = context;
         }
 
-        public async Task<Kill> CreateKill(Kill kill, int gameId, string biteCode)
+        public async Task<Kill> CreateKill(Kill kill, int gameId, string biteCode, string subject)
         {
+            var issuer = await _context.Players.Include(x => x.User).Where(x => x.User.KeycloakId == subject).Where(x => x.Id == kill.KillerId).FirstOrDefaultAsync();
+            if (issuer is null)
+                throw new SubjectDoesNotMatchException("Subject does not match request");
             var victim = await _context.Players.Where(x => x.GameId == gameId).FirstOrDefaultAsync(p => p.BiteCode== biteCode);
             if (victim is null)
                 throw new PlayerNotFoundException($"Victim with bite code {biteCode} not found");

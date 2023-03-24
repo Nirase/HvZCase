@@ -90,10 +90,11 @@ namespace HvZAPI.Controllers
         [Authorize(Roles = "user")]
         public async Task<ActionResult<PlayerDTO>> CreatePlayer(int gameId, CreatePlayerDTO createPlayerDTO)
         {
+            var subject = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var player = _mapper.Map<Player>(createPlayerDTO);
             try
             {
-                await _playerService.AddPlayer(gameId, player);
+                await _playerService.AddPlayer(gameId, player, subject);
                 return CreatedAtAction(nameof(GetPlayerById), new { id = player.Id }, _mapper.Map<PlayerDTO>(player));
             }
             catch(UserNotFoundException ex)

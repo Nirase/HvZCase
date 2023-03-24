@@ -12,10 +12,8 @@ namespace HvZAPI.Models
         [DeleteBehavior(DeleteBehavior.Cascade)]
         public User User { get; set; }
         public int GameId { get; set; }
-
         public Game Game { get; set; }
         ICollection<ChatMessage> SentMessages { get; set; }
-
         public int? SquadId { get; set; }
         public Squad? Squad { get; set; }
     }

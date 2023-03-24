@@ -36,7 +36,7 @@ namespace HvZAPI.Controllers
         /// Fetches all ChatMessage entities in a game
         /// </summary>
         /// <param name="gameId">Game to fetch from</param>
-        /// <returns></returns>
+        /// <returns>Enumerable of all chat messages</returns>
         [HttpGet]
         [Authorize(Roles = "admin")]
         public async Task<ActionResult<IEnumerable<ChatMessageDTO>>> GetChatMessages(int gameId)
@@ -48,6 +48,7 @@ namespace HvZAPI.Controllers
         /// Fetches a ChatMessage entity based on id
         /// </summary>
         /// <param name="id">Entity id</param>
+        /// <param name="gameId">Game id to search within</param>
         /// <returns>Found ChatMessage entity</returns>
         [HttpGet("{id}")]
         [Authorize(Roles = "admin")]
@@ -92,21 +93,27 @@ namespace HvZAPI.Controllers
         /// </summary>
         /// <param name="message">Message to send</param>
         /// <param name="gameId">Game id</param>
-        /// <returns></returns>
+        /// <returns>Created chat message</returns>
         [HttpPost]
         [Authorize(Roles = "user")]
         public async Task<ActionResult> CreateMessage(CreateChatMessageDTO message, int gameId)
         {
             if (message.Contents.Length <= 0)
                 return BadRequest(new ProblemDetails { Detail = "Message content has to be longer than 0"});
+
+            var subject = User.FindFirstValue(ClaimTypes.NameIdentifier);
             try
             {
-                var created = await _chatMessageService.CreateChatMessage(_mapper.Map<ChatMessage>(message), gameId);
+                var created = await _chatMessageService.CreateChatMessage(_mapper.Map<ChatMessage>(message), gameId, subject);
                 return CreatedAtAction(nameof(GetChatMessageById), new { id = created.Id }, message);
             }
             catch(PlayerNotFoundException ex)
             {
                 return NotFound(new ProblemDetails { Detail = ex.Message });
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(new ProblemDetails { Detail = ex.Message });
             }
         }
     }

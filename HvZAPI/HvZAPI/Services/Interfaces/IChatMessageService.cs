@@ -8,6 +8,7 @@ namespace HvZAPI.Services.Interfaces
         /// <summary>
         /// Fetches all ChatMessages
         /// </summary>
+        /// <param name="gameId">Game id</param>
         /// <returns>Enumerable of ChatMessages</returns>
         Task<IEnumerable<ChatMessage>> GetChatMessages(int gameId);
 
@@ -22,10 +23,11 @@ namespace HvZAPI.Services.Interfaces
         /// <summary>
         /// Creates a new ChatMessage entity
         /// </summary>
-        /// <param name="ChatMessage">ChatMessage to create</param>
+        /// <param name="chatMessage">ChatMessage to create</param>
         /// <param name="gameId">Id of game</param>
+        /// <param name="subject">Subject issuing the request</param>
         /// <returns>Created ChatMessage entity</returns>
-        Task<ChatMessage> CreateChatMessage(ChatMessage chatMessage, int gameId);
+        Task<ChatMessage> CreateChatMessage(ChatMessage chatMessage, int gameId, string subject);
 
         /// <summary>
         /// Deletes an existing ChatMessage entity
