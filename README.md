@@ -2,7 +2,7 @@
 This repository handles the backend for a game called "Human vs Zombies", which is a more involved version of Tag, in which zombies try to catch humans and humans do their best to survive. Players are able to create squads together and chat together. 
 
 ## How to run
-To run this locally, you need to have [SSMS](https://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver16) installed, you need to have a [Pusher](https://pusher.com/) account and Channel created and you need to have a keycloak service running locally or online. Set the connection string to be your local SSMS connection string, and add the Pusher secrets "PUSHER_APP_ID", "PUSHER_APP_KEY", "PUSHER_APP_SECRET" to your local secrets manager. In visual studio 2022, this would be done using the commands 
+To run this locally, you need to have [SSMS](https://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver16) installed, you need to have a [Pusher](https://pusher.com/) account and Channel created and you need to have a keycloak service running locally or online. There needs to be two Realm Roles set to access everything, "user" and "admin. Set the connection string to be your local SSMS connection string, and add the Pusher secrets "PUSHER_APP_ID", "PUSHER_APP_KEY", "PUSHER_APP_SECRET" to your local secrets manager. In visual studio 2022, this would be done using the commands 
 cd ./HvZAPI/
 dotnet user-secrets "PUSHER_APP_ID" <appId> --project "HvZAPI.csproj"
 dotnet user-secrets "PUSHER_APP_KEY" <appKey> --project "HvZAPI.csproj"
@@ -26,5 +26,7 @@ The backend was made using ASP.NET, SSMS, Docker and Azure. Documentation is han
 
 ## Made by
 Mattias Smedman
+
 Danielle Hamrin
+
 Keman Nguyen
