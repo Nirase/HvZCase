@@ -11,9 +11,11 @@ namespace HvZAPI.Services.Concrete
     public class ChatMessageService : IChatMessageService
     {
         private readonly HvZDbContext _context;
-        public ChatMessageService(HvZDbContext context)
+        private readonly IConfiguration _configuration;
+        public ChatMessageService(HvZDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         public async Task<ChatMessage> CreateChatMessage(ChatMessage chatMessage, int gameId, string subject)
@@ -32,9 +34,9 @@ namespace HvZAPI.Services.Concrete
             };
 
             var pusher = new Pusher(
-              "1567386",
-              "e346b81befca052d8721",
-              "10876182a6c82c619b0b",
+              _configuration["PUSHER_APP_ID"],
+              _configuration["PUSHER_APP_KEY"],
+              _configuration["PUSHER_APP_SECRET"],
               options);
             var result = await pusher.TriggerAsync(
               created.Channel.Name,
