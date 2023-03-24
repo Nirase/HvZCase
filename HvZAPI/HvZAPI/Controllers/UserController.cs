@@ -121,6 +121,7 @@ namespace HvZAPI.Controllers
         /// <param name="createUserDTO">User entity to create</param>
         /// <returns>Fully created User entity</returns>
         [HttpPost]
+        [Authorize(Roles = "user")]
         public async Task<ActionResult<User>> CreateUser(CreateUserDTO createUserDTO)
         {
             var user = _mapper.Map<User>(createUserDTO);
@@ -129,7 +130,7 @@ namespace HvZAPI.Controllers
                 await _userService.AddUser(user);
                 return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
             }
-            catch(UserAlreadyExistsException ex)
+            catch (UserAlreadyExistsException)
             {
                 return Ok();
             }
