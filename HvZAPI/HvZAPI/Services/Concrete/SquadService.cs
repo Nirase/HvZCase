@@ -75,7 +75,7 @@ namespace HvZAPI.Services.Concrete
 
         public async Task<Squad> JoinSquad(int gameId, int squadId, int playerId, string subject)
         {
-            var subjectPlayer = await _context.Users.Include(x => x.Players).Where(x => x.KeycloakId == subject).FirstOrDefaultAsync();
+            var subjectPlayer = await _context.Players.Include(x => x.User).Where(x => x.User.KeycloakId == subject).Where(x => x.GameId == gameId).FirstOrDefaultAsync();
             if (subjectPlayer is null)
                 throw new PlayerNotFoundException("Player not found by subject");
 
@@ -102,7 +102,7 @@ namespace HvZAPI.Services.Concrete
 
         public async Task<Squad> LeaveSquad(int gameId, int squadId, int playerId, string subject)
         {
-            var subjectPlayer = await _context.Users.Include(x => x.Players).Where(x => x.KeycloakId == subject).FirstOrDefaultAsync();
+            var subjectPlayer = await _context.Players.Include(x => x.User).Where(x => x.User.KeycloakId == subject).Where(x => x.GameId == gameId).FirstOrDefaultAsync();
             if (subjectPlayer is null)
                 throw new PlayerNotFoundException("Player not found by subject");
 
