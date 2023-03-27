@@ -88,7 +88,7 @@ namespace HvZAPI.Controllers
         [HttpPost]
         [ActionName(nameof(GetPlayerById))]
         [Authorize(Roles = "user")]
-        public async Task<ActionResult<PlayerDTO>> CreatePlayer(int gameId, CreatePlayerDTO createPlayerDTO)
+        public async Task<ActionResult<DetailedPlayerDTO>> CreatePlayer(int gameId, CreatePlayerDTO createPlayerDTO)
         {
             var subject = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var roles = User.FindAll(ClaimTypes.Role).ToList();
@@ -96,7 +96,7 @@ namespace HvZAPI.Controllers
             try
             {
                 await _playerService.AddPlayer(gameId, player, subject, roles);
-                return CreatedAtAction(nameof(GetPlayerById), new { id = player.Id }, _mapper.Map<PlayerDTO>(player));
+                return CreatedAtAction(nameof(GetPlayerById), new { id = player.Id }, _mapper.Map<DetailedPlayerDTO>(player));
             }
             catch(UserNotFoundException ex)
             {
