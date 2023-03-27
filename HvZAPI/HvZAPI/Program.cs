@@ -47,7 +47,7 @@ internal class Program
             options.AddDefaultPolicy(
          policy =>
          {
-             policy.WithOrigins("http://localhost:3000", "https://hv-z-case-frontend-acs12524m-nirase.vercel.app/")
+             policy.WithOrigins("http://localhost:3000", "https://hv-z-case-frontend-acs12524m-nirase.vercel.app/", "https://hv-z-case-frontend.vercel.app/")
              .AllowAnyHeader()
              .AllowAnyMethod();
          });
