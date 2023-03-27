@@ -99,9 +99,8 @@ namespace HvZAPI.Services.Concrete
             {
 
                 var squad = await _context.Squads.Include(x => x.Players).FirstOrDefaultAsync(x => x.Id == player.SquadId);
-                if (squad != null)
+                if (squad != null && squad.GameId == gameId)
                 {
-
                     if (squad.Players.Contains(foundPlayer))
                     {
                         foundPlayer.IsHuman = player.IsHuman;
