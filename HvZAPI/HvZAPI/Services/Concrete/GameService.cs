@@ -36,8 +36,19 @@ namespace HvZAPI.Services.Concrete
             if(game is null)
                 throw new GameNotFoundException($"Game {id} not found");
 
-            foreach(var kill in game.Kills) 
+
+            var messages = await _context.ChatMessages.Where(x => game.Players.Contains(x.Player)).ToListAsync();
+            foreach (var message in messages)
+                _context.ChatMessages.Remove(message);
+
+            foreach (var kill in game.Kills)
+            {
+                await _context.SaveChangesAsync();
                 _context.Kills.Remove(kill);
+            }
+
+
+
             
             game.Kills.Clear();
             _context.Games.Remove(game);
