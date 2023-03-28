@@ -3,6 +3,7 @@ using HvZAPI.Exceptions;
 using HvZAPI.Models;
 using HvZAPI.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace HvZAPI.Services.Concrete
 {
@@ -51,9 +52,15 @@ namespace HvZAPI.Services.Concrete
             return game;
         }
 
-        public async Task<IEnumerable<Game>> GetGames()
+        public async Task<IEnumerable<Game>> GetGames(string subject, List<Claim> roles)
         {
-            return await _context.Games.Include(x => x.Players).ThenInclude(x => x.User).Include(x => x.Kills).Include(x => x.Missions).ToListAsync();
+            if(roles.Where(x => x.Value == "admin").ToList().Count > 0)
+                return await _context.Games.Include(x => x.Players).ThenInclude(x => x.User).Include(x => x.Kills).Include(x => x.Missions).ToListAsync();
+
+            if(subject == null)
+                return await _context.Games.Include(x => x.Players).ThenInclude(x => x.User).Include(x => x.Kills).Include(x => x.Missions).Where(x => x.GameState == "Registration").ToListAsync();
+
+            return await _context.Games.Include(x => x.Players).ThenInclude(x => x.User).Include(x => x.Kills).Include(x => x.Missions).Where(x => x.GameState == "Registration" || (x.Players.Where(x => x.User.KeycloakId == subject).ToList().Count > 0 && x.GameState == "InProgress")).ToListAsync();
         }
 
         public async Task<Game> UpdateGame(Game game)

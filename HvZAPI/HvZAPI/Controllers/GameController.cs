@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using System.Runtime.InteropServices;
+using System.Security.Claims;
 
 namespace HvZAPI.Controllers
 {
@@ -33,7 +34,9 @@ namespace HvZAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GameDTO>>> GetGames()
         {
-            return Ok(_mapper.Map<IEnumerable<GameDTO>>(await _gameService.GetGames()));
+            var subject = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var roles = User.FindAll(ClaimTypes.Role).ToList();
+            return Ok(_mapper.Map<IEnumerable<GameDTO>>(await _gameService.GetGames(subject, roles)));
         }
 
         /// <summary>
@@ -44,7 +47,9 @@ namespace HvZAPI.Controllers
         [Authorize(Roles = "user")]
         public async Task<ActionResult<IEnumerable<DetailedGameDTO>>> GetGamesDetailed()
         {
-            return Ok(_mapper.Map<IEnumerable<DetailedGameDTO>>(await _gameService.GetGames()));
+            var subject = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var roles = User.FindAll(ClaimTypes.Role).ToList();
+            return Ok(_mapper.Map<IEnumerable<DetailedGameDTO>>(await _gameService.GetGames(subject, roles)));
         }
         /// <summary>
         /// Fetches a game entity based on id

@@ -1,4 +1,5 @@
 ﻿using HvZAPI.Models;
+using System.Security.Claims;
 
 namespace HvZAPI.Services.Interfaces
 {
@@ -9,7 +10,7 @@ namespace HvZAPI.Services.Interfaces
         /// Fetches all games
         /// </summary>
         /// <returns>Enumerable of games</returns>
-        Task<IEnumerable<Game>> GetGames();
+        Task<IEnumerable<Game>> GetGames(string subject, List<Claim> roles);
 
         /// <summary>
         /// Fetches game based on id
