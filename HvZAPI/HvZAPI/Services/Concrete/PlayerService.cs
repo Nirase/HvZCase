@@ -57,6 +57,10 @@ namespace HvZAPI.Services.Concrete
             foreach (var kill in kills)
                 _context.Kills.Remove(kill);
             await _context.SaveChangesAsync();
+            var messages = await _context.ChatMessages.Where(x => x.PlayerId == playerId).ToListAsync();
+            foreach (var message in messages)
+                _context.ChatMessages.Remove(message);
+            await _context.SaveChangesAsync();
             _context.Players.Remove(player);
             await _context.SaveChangesAsync();
         }
