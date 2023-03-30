@@ -39,7 +39,7 @@ namespace HvZAPI.Services.Concrete
               _configuration["PUSHER_APP_SECRET"],
               options);
             var result = await pusher.TriggerAsync(
-              created.Channel.Name,
+              created.Channel.Id.ToString(),
               "MessageRecieved",
               new { channel = created.Channel.Name, message = created.Contents, sender = sender.User.FirstName + " " + sender.User.LastName });
             return chatMessage;
